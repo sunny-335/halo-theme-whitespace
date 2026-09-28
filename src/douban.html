@@ -1,0 +1,141 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title
+      th:text="|${singlePage.spec.title} - ${site.title}|"
+      th:if="${singlePage != null}"
+    >
+      豆瓣
+    </title>
+    <style>
+      .douban-intro {
+        color: var(--color-text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+      }
+      .douban-section {
+        margin: 2rem 0;
+      }
+      .douban-section-title {
+        font-size: 1.15rem;
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .douban-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+        gap: 1.25rem;
+      }
+      .douban-card {
+        display: block;
+        color: var(--color-text);
+      }
+      .douban-card:hover .douban-name {
+        color: var(--color-primary);
+      }
+      .douban-cover {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        border-radius: var(--radius-md);
+        background: var(--color-bg-secondary);
+      }
+      .douban-name {
+        margin: 0.5rem 0 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .douban-meta {
+        margin: 0.25rem 0 0;
+        font-size: 0.78rem;
+        color: var(--color-text-muted);
+      }
+      .douban-score {
+        color: var(--color-primary);
+        font-weight: 600;
+        margin-left: 0.4rem;
+      }
+      .douban-empty {
+        color: var(--color-text-muted);
+        padding: 2rem 0;
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <section class="douban">
+      <h1 th:text="${singlePage.spec.title}" th:if="${singlePage != null}">
+        豆瓣
+      </h1>
+      <p
+        class="douban-intro"
+        th:if="${singlePage.status?.excerpt != null}"
+        th:utext="${singlePage.status.excerpt}"
+      ></p>
+
+      <th:block th:if="${pluginFinder.available('plugin-douban')}">
+        <th:block
+          th:with="collections=${{ {'type':'book','status':'done','label':'读过'}, {'type':'book','status':'doing','label':'在读'}, {'type':'movie','status':'done','label':'看过'}, {'type':'drama','status':'doing','label':'在追'} }}"
+        >
+          <th:block th:each="col : ${collections}">
+            <th:block
+              th:with="movies=${doubanFinder.getMovies(24, 0, col.type, col.status)}"
+            >
+              <div
+                class="douban-section"
+                th:if="${not #lists.isEmpty(movies)}"
+              >
+                <h2 class="douban-section-title" th:text="${col.label}">
+                  读过
+                </h2>
+                <div class="douban-grid">
+                  <a
+                    th:each="m : ${movies}"
+                    class="douban-card"
+                    th:href="${m.spec.link}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      class="douban-cover"
+                      th:src="${m.spec.poster}"
+                      th:alt="${m.spec.name}"
+                      loading="lazy"
+                    />
+                    <p class="douban-name" th:text="${m.spec.name}">名称</p>
+                    <p class="douban-meta">
+                      <span
+                        th:if="${not #strings.isEmpty(m.spec.year)}"
+                        th:text="${m.spec.year}"
+                        >年份</span
+                      >
+                      <span
+                        th:if="${not #strings.isEmpty(m.spec.douban_score)}"
+                        class="douban-score"
+                        th:text="'★ ' + ${m.spec.douban_score}"
+                        >评分</span
+                      >
+                    </p>
+                  </a>
+                </div>
+              </div>
+            </th:block>
+          </th:block>
+        </th:block>
+      </th:block>
+
+      <p
+        class="douban-empty"
+        th:if="${pluginFinder.available('plugin-douban') == false}"
+        th:text="#{douban.plugin_required}"
+      >
+        未检测到豆瓣插件
+      </p>
+    </section>
+  </div>
+</include>

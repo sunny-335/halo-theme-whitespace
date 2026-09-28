@@ -14,6 +14,10 @@
 - 文章页结构化数据（Schema.org `BlogPosting` JSON-LD）与社交分享标签（canonical / Open Graph / Twitter Card），均可在主题设置中关闭
 - 内置搜索按钮（依赖官方 `PluginSearchWidget` 插件，未安装则不显示）
 - 阅读进度条、代码块复制、相对时间、回到顶部、移动端菜单等交互
+- **二级导航**：菜单项的子项自动渲染为下拉菜单（桌面端 hover/focus 展开，移动端嵌套缩进展开）
+- **页脚可关闭的主题署名**：默认「Theme by 暖心向阳335」，可在设置中修改名称或整体关闭
+- **页脚全站数据统计**：文章 / 分类 / 标签 / 评论 / 访问量 / 字数，可按项开关，整体可关闭
+- **文章卡片字数 + 阅读时长**：可在设置中关闭（需 `halo-plugin-extra-api` 提供数据）
 - 多语言：`i18n/default.properties`（回退）+ `i18n/zh_CN.properties`
 - 提供 `layout.html` 布局契约，供使用布局契约的插件页面复用主题导航 / 页脚 / 暗色样式
 
@@ -26,6 +30,7 @@
 - **plugin-links**：`/links` 友链页；友链申请表单已**直接内嵌**在友链页底部（点击「申请友链」展开，调用插件公共 REST API，含图形验证码）；并额外提供
   - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）
 - **halo-weread-plugin**：`weread.html` 微信读书书架页（前端拉取插件 `/shelf-html` 并注入）
+- **plugin-douban**：`douban.html` 豆瓣收藏页（按「读过 / 在读 / 看过 / 在追」分栏展示书影音，使用 `doubanFinder.getMovies(...)`；未安装插件时显示提示）。在控制台新建单页并选择「豆瓣页面」模板即可启用
 - **留言板**：`page_guestbook.html` 以评论区作为留言板的单页模板
 - **plugin-extra-api**：API 扩展包（无独立页面），主题已适配其 shiki 代码高亮与暗色样式；并在文章卡片 / 详情页展示**字数 + 阅读时长**、归档页展示**全站总字数**、瞬间页展示**单条字数**（通过 `extraApiStatsFinder`，插件未安装时自动隐藏）
 
@@ -50,6 +55,7 @@ src/                      源码目录（在此编辑）
 ├── js/post.ts            文章页脚本（代码复制 / 阅读进度）
 ├── index.html  post.html  page.html  page_about.html
 ├── archives.html  category.html  tag.html  categories.html  tags.html  author.html
+├── weread.html  douban.html  links-subscribe.html  page_guestbook.html
 └── i18n/                 多语言消息
 theme.yaml                主题元数据（必填）
 settings.yaml             控制台主题设置表单
@@ -81,12 +87,18 @@ pnpm check          # 格式化 + Lint 修复
 | ------- | ------------------ | -------------------------------------------- |
 | basic   | color_scheme       | 默认配色：跟随系统 / 浅色 / 深色             |
 | basic   | footer_copyright   | 页脚自定义版权（支持 HTML，留空不显示）     |
+| basic   | show_theme_credit  | 页脚是否显示「Theme by」署名（默认开）       |
+| basic   | theme_credit_text  | 署名名称（默认「暖心向阳335」）              |
+| basic   | show_word_count    | 文章卡片是否显示字数与阅读时长（需 extra-api）|
 | featured| enable             | 首页是否展示置顶文章                         |
 | about   | avatar / bio / github_url / twitter_url / contact_email | 关于页（自定义模板 `page_about.html`）内容 |
 | seo     | enable_metadata    | 输出 canonical / Open Graph / Twitter Card  |
 | seo     | enable_structured_data | 输出文章页 BlogPosting JSON-LD            |
 | footer  | icp_number / icp_url | ICP 备案号与查询链接（默认工信部备案管理系统） |
 | footer  | police_number / police_url | 公网安备号与查询链接（默认全国互联网安全管理服务平台） |
+| stats   | enable             | 页脚是否显示全站数据统计（默认关）            |
+| stats   | show_posts / show_categories / show_tags / show_comments / show_visits | 各项统计的显隐开关 |
+| stats   | show_words         | 全站总字数（需 extra-api 插件，默认开）       |
 
 ## 约定与说明
 

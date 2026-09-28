@@ -25,6 +25,22 @@ spec:
           value: ""
           placeholder: 支持编写 HTML，留空则不显示
           help: 显示在页脚的自定义版权信息
+        - $formkit: checkbox
+          name: show_theme_credit
+          label: 显示主题署名
+          value: true
+          help: 在页脚显示「Theme by」署名；关闭则不显示
+        - $formkit: text
+          name: theme_credit_text
+          label: 署名名称
+          value: "暖心向阳335"
+          placeholder: 显示在「Theme by」之后的名称
+          help: 页脚主题署名的展示名称
+        - $formkit: checkbox
+          name: show_word_count
+          label: 文章卡片显示字数
+          value: true
+          help: 在文章卡片与置顶文章上展示字数及阅读时长（需 extra-api 插件提供数据）
     - group: featured
       label: 置顶文章
       formSchema:
@@ -99,3 +115,35 @@ spec:
           label: 公网安备查询链接
           value: "https://beian.mps.gov.cn"
           help: 点击公网安备号跳转的地址，默认全国互联网安全管理服务平台
+    - group: stats
+      label: 全站数据
+      formSchema:
+        - $formkit: checkbox
+          name: enable
+          label: 显示全站数据统计
+          value: false
+          help: 在页脚展示站点文章、分类、评论、访问量与字数等统计
+        - $formkit: checkbox
+          name: show_posts
+          label: 文章数
+          value: true
+        - $formkit: checkbox
+          name: show_categories
+          label: 分类数
+          value: true
+        - $formkit: checkbox
+          name: show_tags
+          label: 标签数
+          value: false
+        - $formkit: checkbox
+          name: show_comments
+          label: 评论数
+          value: true
+        - $formkit: checkbox
+          name: show_visits
+          label: 访问量
+          value: true
+        - $formkit: checkbox
+          name: show_words
+          label: 全站总字数（需 extra-api 插件）
+          value: true

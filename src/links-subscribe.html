@@ -41,8 +41,8 @@
       <h1 th:text="${singlePage.spec.title}" th:if="${singlePage != null}">链接订阅</h1>
       <p
         class="feed-intro"
-        th:if="${singlePage.spec.description != null}"
-        th:utext="${singlePage.spec.description}"
+        th:if="${singlePage.status?.excerpt != null}"
+        th:utext="${singlePage.status.excerpt}"
       ></p>
 
       <div

@@ -37,3 +37,7 @@ spec:
         description: 适配 plugin-links 的 RSS 订阅动态聚合页
         screenshot:
         file: links-subscribe.html
+      - name: 豆瓣页面
+        description: 适配 plugin-douban（豆瓣/追番）的主题页面，按收藏状态展示条目
+        screenshot:
+        file: douban.html

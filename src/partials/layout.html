@@ -58,13 +58,37 @@
               >Home</a
             >
             <th:block th:if="${primaryMenu != null}">
-              <a
-                th:each="item : ${primaryMenu.menuItems}"
-                th:href="@{${item.status.href}}"
-                th:text="${item.status.displayName}"
-                th:target="${item.spec.target?.value}"
-                class="nav-link"
-              ></a>
+              <th:block th:each="item : ${primaryMenu.menuItems}">
+                <th:block
+                  th:if="${not #lists.isEmpty(item.children)}"
+                >
+                  <div class="nav-item nav-has-children">
+                    <a
+                      class="nav-link"
+                      th:href="@{${item.status.href}}"
+                      th:text="${item.status.displayName}"
+                      th:target="${item.spec.target?.value}"
+                    ></a>
+                    <div class="nav-dropdown">
+                      <a
+                        th:each="child : ${item.children}"
+                        class="nav-dropdown-link"
+                        th:href="@{${child.status.href}}"
+                        th:text="${child.status.displayName}"
+                        th:target="${child.spec.target?.value}"
+                      ></a>
+                    </div>
+                  </div>
+                </th:block>
+                <th:block th:unless="${not #lists.isEmpty(item.children)}">
+                  <a
+                    class="nav-link"
+                    th:href="@{${item.status.href}}"
+                    th:text="${item.status.displayName}"
+                    th:target="${item.spec.target?.value}"
+                  ></a>
+                </th:block>
+              </th:block>
             </th:block>
           </th:block>
         </nav>
@@ -153,13 +177,21 @@
           >Home</a
         >
         <th:block th:if="${primaryMenu != null}">
-          <a
-            th:each="item : ${primaryMenu.menuItems}"
-            th:href="@{${item.status.href}}"
-            th:text="${item.status.displayName}"
-            th:target="${item.spec.target?.value}"
-            class="mobile-nav-link"
-          ></a>
+          <th:block th:each="item : ${primaryMenu.menuItems}">
+            <a
+              class="mobile-nav-link"
+              th:href="@{${item.status.href}}"
+              th:text="${item.status.displayName}"
+              th:target="${item.spec.target?.value}"
+            ></a>
+            <a
+              th:each="child : ${item.children}"
+              class="mobile-nav-link mobile-nav-sub"
+              th:href="@{${child.status.href}}"
+              th:text="${child.status.displayName}"
+              th:target="${child.spec.target?.value}"
+            ></a>
+          </th:block>
         </th:block>
       </th:block>
     </div>
@@ -176,10 +208,11 @@
           th:if="${not #strings.isEmpty(theme.config?.basic?.footer_copyright)}"
           th:utext="${theme.config.basic.footer_copyright}"
         ></div>
-        <p class="footer-theme">
-          Theme by
-          <a href="https://kehua.me" target="_blank" rel="noopener">kehua</a>
-        </p>
+        <p
+          class="footer-theme"
+          th:if="${theme.config?.basic?.show_theme_credit != false}"
+          th:text="#{footer.theme(${theme.config?.basic?.theme_credit_text ?: '暖心向阳335'})}"
+        >Theme by kehua</p>
         <div
           class="footer-beian"
           th:if="${not #strings.isEmpty(theme.config?.footer?.icp_number) or not #strings.isEmpty(theme.config?.footer?.police_number)}"
@@ -208,6 +241,48 @@
             />
             <span th:text="${theme.config?.footer?.police_number}">公网安备</span>
           </a>
+        </div>
+        <div
+          class="footer-stats"
+          th:if="${theme.config?.stats?.enable}"
+          th:with="stats=${siteStatsFinder.getStats()}, tags=${tagFinder.listAll()}"
+        >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_posts}"
+            th:text="#{stats.posts(${stats.post})}"
+            >文章</span
+          >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_categories}"
+            th:text="#{stats.categories(${stats.category})}"
+            >分类</span
+          >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_tags and tags != null}"
+            th:text="#{stats.tags(${#lists.size(tags)})}"
+            >标签</span
+          >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_comments}"
+            th:text="#{stats.comments(${stats.comment})}"
+            >评论</span
+          >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_visits}"
+            th:text="#{stats.visits(${stats.visit})}"
+            >访问</span
+          >
+          <span
+            class="footer-stat"
+            th:if="${theme.config?.stats?.show_words and pluginFinder.available('extra-api')}"
+            th:text="#{stats.words(${extraApiStatsFinder.getPostWordCount()})}"
+            >字数</span
+          >
         </div>
         <halo:footer />
       </div>
