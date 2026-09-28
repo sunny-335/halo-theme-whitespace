@@ -1,32 +1,84 @@
-<include src="layout.html">
+<include src="partials/layout.html">
   <template name="head">
-    <title th:text="|Archives - ${site.title}|">Archives</title>
+    <title th:text="|#{archive.title} - ${site.title}|">Archives</title>
+    <th:block
+      th:with="seoTitle=#{archive.title}, seoUrl=${site.url + site.routes.archivesUri}, seoDesc=null, seoImage=${site.logo}, seoType='website'"
+    >
+      <include src="seo.html"></include>
+    </th:block>
   </template>
 
-  <h1>Archives</h1>
-
-  <th:block th:each="archive : ${archives.items}">
-    <div class="archive-year">
-      <h2 th:text="${archive.year}"></h2>
-      <th:block th:each="month : ${archive.months}">
-        <h3 th:text="|${archive.year}-${month.month}|"></h3>
-        <ul class="post-list">
-          <li class="post-item" th:each="post : ${month.posts}">
-            <h2 class="post-title">
-              <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"></a>
-            </h2>
-            <p class="post-meta">
-              <time th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
-            </p>
-          </li>
-        </ul>
-      </th:block>
+  <div class="container">
+    <!-- 归档标题 -->
+    <div class="category-header">
+      <h1 class="category-title" th:text="#{archive.title}">Archives</h1>
     </div>
-  </th:block>
 
-  <nav class="pagination" th:if="${archives.hasPrevious() || archives.hasNext()}">
-    <a th:if="${archives.hasPrevious()}" th:href="@{${archives.prevUrl}}">Previous</a>
-    <span th:text="|${archives.page} / ${archives.totalPages}|"></span>
-    <a th:if="${archives.hasNext()}" th:href="@{${archives.nextUrl}}">Next</a>
-  </nav>
+    <!-- 归档统计 -->
+    <div
+      class="archive-stats"
+      th:with="stats = ${siteStatsFinder.getStats()}, tags = ${tagFinder.listAll()}"
+      th:if="${stats != null}"
+    >
+      <div class="archive-stat">
+        <div class="archive-stat-number" th:text="${stats.post}">0</div>
+        <div class="archive-stat-label" th:text="#{archive.stats.posts}">
+          Posts
+        </div>
+      </div>
+      <div class="archive-stat">
+        <div class="archive-stat-number" th:text="${stats.category}">0</div>
+        <div class="archive-stat-label" th:text="#{archive.stats.categories}">
+          Categories
+        </div>
+      </div>
+      <div class="archive-stat" th:if="${tags != null}">
+        <div class="archive-stat-number" th:text="${#lists.size(tags)}">0</div>
+        <div class="archive-stat-label" th:text="#{archive.stats.tags}">
+          Tags
+        </div>
+      </div>
+    </div>
+
+    <!-- 按年归档 -->
+    <th:block th:each="archive : ${archives.items}">
+      <div class="archive-year">
+        <h2 class="archive-year-title" th:text="${archive.year}">2024</h2>
+        <ul class="archive-list">
+          <th:block th:each="month : ${archive.months}">
+            <li
+              class="archive-item"
+              th:each="post : ${month.posts}"
+              th:with="postCategories = ${post.categories}"
+            >
+              <span
+                class="archive-date"
+                th:if="${post.spec.publishTime != null}"
+                th:text="${#temporals.format(post.spec.publishTime, 'MM-dd')}"
+                >01-01</span
+              >
+              <span class="archive-title">
+                <a th:href="@{${post.status.permalink}}"
+                   th:text="${post.spec.title}">Post title</a>
+              </span>
+              <span
+                class="archive-category"
+                th:if="${not #lists.isEmpty(postCategories)}"
+              >
+                <a
+                  th:href="@{${postCategories[0].status.permalink}}"
+                  th:text="${postCategories[0].spec.displayName}"
+                ></a>
+              </span>
+            </li>
+          </th:block>
+        </ul>
+      </div>
+    </th:block>
+
+    <!-- 分页 -->
+    <th:block
+      th:replace="~{modules/pagination :: pagination(context = |${site.routes.archivesUri}/|, prevUrl = ${archives.prevUrl}, nextUrl = ${archives.nextUrl}, totalPages = ${archives.totalPages}, page = ${archives.page}, hasPrevious = ${archives.hasPrevious()}, hasNext = ${archives.hasNext()})}"
+    ></th:block>
+  </div>
 </include>

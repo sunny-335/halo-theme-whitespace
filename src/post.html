@@ -1,56 +1,111 @@
-<include src="layout.html">
+<include src="partials/layout.html">
   <template name="head">
     <title th:text="|${post.spec.title} - ${site.title}|">Post Title</title>
-    <script type="module" src="./js/post.ts"></script>
+    <th:block
+      th:with="seoTitle=${post.spec.title}, seoUrl=${site.url + post.status.permalink}, seoDesc=${post.status.excerpt}, seoImage=${post.spec.cover}, seoType='article'"
+    >
+      <include src="seo.html"></include>
+    </th:block>
+    <th:block th:if="${theme.config?.seo?.enable_structured_data}">
+      <script type="application/ld+json" th:inline="javascript">
+        {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": /*[[${post.spec.title}]]*/ "",
+          "url": /*[[${site.url + post.status.permalink}]]*/ "",
+          "description": /*[[${post.status.excerpt}]]*/ "",
+          "image": /*[[${post.spec.cover}]]*/ "",
+          "datePublished": /*[[${post.spec.publishTime != null ? #temporals.format(post.spec.publishTime, "yyyy-MM-dd'T'HH:mm:ssXXX") : null}]]*/ "",
+          "dateModified": /*[[${post.status.lastModifyTime != null ? #temporals.format(post.status.lastModifyTime, "yyyy-MM-dd'T'HH:mm:ssXXX") : null}]]*/ "",
+          "author": {
+            "@type": "Person",
+            "name": /*[[${post.owner?.displayName}]]*/ ""
+          }
+        }
+      </script>
+    </th:block>
+    <script type="module" src="/js/post.ts"></script>
   </template>
 
-  <article>
-    <header class="article-header">
-      <h1 class="article-title" th:text="${post.spec.title}"></h1>
-      <div class="article-meta">
-        <time th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time>
-        <span th:if="${not #lists.isEmpty(post.categories)}">
-          &nbsp;·&nbsp;
-          <a
-            th:each="cat : ${post.categories}"
-            th:href="@{${cat.status.permalink}}"
-            th:text="${cat.spec.displayName}"
-            class="category"
-          ></a>
-        </span>
+  <div class="container">
+    <!-- 文章内容 -->
+    <article class="article-detail">
+      <header class="article-header">
+        <h1 class="article-title" th:text="${post.spec.title}">Post title</h1>
+        <div class="article-meta">
+          <time
+            th:if="${post.spec.publishTime != null}"
+            class="article-date"
+            th:datetime="${post.spec.publishTime}"
+            th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+            data-relative-time
+          ></time>
+          <th:block th:if="${not #lists.isEmpty(post.categories)}">
+            <span class="article-meta-sep">·</span>
+            <span class="article-category">
+              <a
+                th:each="cat : ${post.categories}"
+                th:href="@{${cat.status.permalink}}"
+                th:text="${cat.spec.displayName}"
+              ></a>
+            </span>
+          </th:block>
+          <th:block
+            th:if="${post.stats != null and post.stats.visit != null and post.stats.visit > 0}"
+          >
+            <span class="article-meta-sep">·</span>
+            <span
+              class="article-views"
+              th:text="#{post.views(${post.stats.visit})}"
+              >1 views</span
+            >
+          </th:block>
+        </div>
+      </header>
+
+      <div class="article-cover" th:if="${not #strings.isEmpty(post.spec.cover)}">
+        <img th:src="${post.spec.cover}" th:alt="${post.spec.title}" />
       </div>
-    </header>
 
-    <div class="article-content" th:utext="${post.content.content}"></div>
+      <div class="article-content" th:utext="${post.content.content}"></div>
 
-    <div class="article-tags" th:if="${not #lists.isEmpty(post.tags)}">
-      <a
-        th:each="tag : ${post.tags}"
-        th:href="@{${tag.status.permalink}}"
-        th:text="${tag.spec.displayName}"
-        class="tag"
-      ></a>
-    </div>
+      <!-- 文章标签 -->
+      <div class="article-tags" th:if="${not #lists.isEmpty(post.tags)}">
+        <span class="tag-label" th:text="#{tag.title}">Tags</span>
+        <a
+          th:each="tag : ${post.tags}"
+          th:href="@{${tag.status.permalink}}"
+          th:text="${tag.spec.displayName}"
+        ></a>
+      </div>
 
-    <nav class="post-nav" th:with="cursor = ${postFinder.cursor(post.metadata.name)}">
-      <span>
+      <!-- 文章导航 -->
+      <nav
+        class="article-nav"
+        th:with="cursor = ${postFinder.cursor(post.metadata.name)}"
+      >
         <a
           th:if="${cursor.hasPrevious()}"
+          class="article-nav-item article-nav-prev"
           th:href="@{${cursor.previous.status.permalink}}"
-          th:text="|← ${cursor.previous.spec.title}|"
+          th:text="${cursor.previous.spec.title}"
         ></a>
-      </span>
-      <span>
         <a
           th:if="${cursor.hasNext()}"
+          class="article-nav-item article-nav-next"
           th:href="@{${cursor.next.status.permalink}}"
-          th:text="|${cursor.next.spec.title} →|"
+          th:text="${cursor.next.spec.title}"
         ></a>
-      </span>
-    </nav>
-  </article>
+      </nav>
+    </article>
 
-  <div th:if="${haloCommentEnabled}">
-    <halo:comment group="content.halo.run" kind="Post" th:attr="name=${post.metadata.name}" />
+    <!-- 评论区 -->
+    <div th:if="${haloCommentEnabled}" class="comments-section">
+      <halo:comment
+        group="content.halo.run"
+        kind="Post"
+        th:attr="name=${post.metadata.name}"
+      />
+    </div>
   </div>
 </include>

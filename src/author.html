@@ -1,0 +1,53 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title th:text="|${author.spec.displayName} - ${site.title}|">
+      Author
+    </title>
+    <th:block
+      th:with="seoTitle=${author.spec.displayName}, seoUrl=${site.url + author.status.permalink}, seoDesc=${author.spec.bio}, seoImage=${author.spec.avatar ?: site.logo}, seoType='website'"
+    >
+      <include src="seo.html"></include>
+    </th:block>
+  </template>
+
+  <div class="container">
+    <!-- 作者信息 -->
+    <div class="category-header">
+      <div class="author-header">
+        <div
+          class="about-avatar author-avatar"
+          th:if="${not #strings.isEmpty(author.spec.avatar)}"
+        >
+          <img th:src="${author.spec.avatar}" th:alt="${author.spec.displayName}" />
+        </div>
+        <h1 class="category-title" th:text="${author.spec.displayName}">
+          Author
+        </h1>
+        <p
+          class="category-description"
+          th:if="${not #strings.isEmpty(author.spec.bio)}"
+          th:text="${author.spec.bio}"
+        ></p>
+      </div>
+    </div>
+
+    <!-- 文章列表 -->
+    <div class="post-list" th:if="${not #lists.isEmpty(posts.items)}">
+      <th:block th:each="post : ${posts.items}">
+        <th:block
+          th:replace="~{modules/post-card :: post-card(post=${post})}"
+        ></th:block>
+      </th:block>
+    </div>
+
+    <!-- 空状态 -->
+    <div class="no-results" th:if="${#lists.isEmpty(posts.items)}">
+      <p th:text="#{list.empty}">Nothing found here.</p>
+    </div>
+
+    <!-- 分页 -->
+    <th:block
+      th:replace="~{modules/pagination :: pagination(context = |${author.status.permalink}/|, prevUrl = ${posts.prevUrl}, nextUrl = ${posts.nextUrl}, totalPages = ${posts.totalPages}, page = ${posts.page}, hasPrevious = ${posts.hasPrevious()}, hasNext = ${posts.hasNext()})}"
+    ></th:block>
+  </div>
+</include>

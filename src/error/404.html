@@ -1,0 +1,31 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title th:text="|#{error.404.title} - ${site.title}|">404</title>
+  </template>
+
+  <div class="container">
+    <!-- 404 内容 -->
+    <div class="error-page">
+      <div class="error-code" th:text="${error.status != null ? error.status : 404}">
+        404
+      </div>
+      <h1 class="error-title" th:text="#{error.404.title}">Page not found</h1>
+      <p class="error-message" th:text="#{error.404.message}">
+        Sorry, the page you visited does not exist.
+      </p>
+      <div class="error-actions">
+        <a th:href="@{/}" class="error-btn" th:text="#{error.back.home}"
+          >Back to home</a
+        >
+        <button
+          type="button"
+          class="error-btn error-btn-secondary"
+          onclick="history.back()"
+          th:text="#{error.back.prev}"
+        >
+          Go back
+        </button>
+      </div>
+    </div>
+  </div>
+</include>

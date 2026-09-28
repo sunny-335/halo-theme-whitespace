@@ -1,21 +1,43 @@
 apiVersion: theme.halo.run/v1alpha1
 kind: Theme
 metadata:
-  name: theme-vite-starter
+  name: whitespace
 spec:
-  displayName: Vite Starter
+  displayName: Whitespace 留白
   author:
-    name: Halo
-    website: https://github.com/halo-dev
-  description: A development starter theme with Vite Ecosystem for Halo
-  logo: https://www.halo.run/logo
-  homepage: https://github.com/halo-dev/theme-vite-starter#readme
-  repo: https://github.com/halo-dev/theme-vite-starter
-  issues: https://github.com/halo-dev/theme-vite-starter/issues
-  settingName: "theme-vite-starter-setting"
-  configMapName: "theme-vite-starter-configMap"
-  version: 1.0.0
-  requires: ">=2.0.0"
+    name: 暖心向阳335
+    website: https://git.nxxy335.top/nxxy335
+  description: 一款极简单栏博客主题，移植自 Typecho 主题 whitespace 留白，支持亮暗双主题、搜索与丰富的归档能力，并适配 moments/photos/links/weread 等插件。
+  logo: ""
+  homepage: https://git.nxxy335.top/nxxy335/halo-theme-whitespace
+  repo: https://git.nxxy335.top/nxxy335/halo-theme-whitespace.git
+  issues: https://git.nxxy335.top/nxxy335/halo-theme-whitespace/issues
+  settingName: "whitespace-setting"
+  configMapName: "whitespace-configMap"
+  version: 0.1.0
+  requires: ">=2.26.0"
   license:
     - name: "GPL-3.0"
       url: "https://github.com/halo-dev/theme-vite-starter/blob/main/LICENSE"
+  customTemplates:
+    page:
+      - name: 关于页面
+        description: 关于页面布局，展示头像、个人简介与社交链接
+        screenshot:
+        file: page_about.html
+      - name: 微信读书页面
+        description: 适配 halo-weread-plugin，展示微信读书书架与读书笔记
+        screenshot:
+        file: weread.html
+      - name: 留言板页面
+        description: 以评论区作为留言板的单页模板
+        screenshot:
+        file: page_guestbook.html
+      - name: 友链申请页面
+        description: 适配 plugin-links 的访客友链申请表单
+        screenshot:
+        file: links-apply.html
+      - name: 链接订阅页面
+        description: 适配 plugin-links 的 RSS 订阅动态聚合页
+        screenshot:
+        file: links-subscribe.html

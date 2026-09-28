@@ -1,76 +1,100 @@
-# Theme Vite Starter
+# Whitespace 留白
 
-面向 [Halo](https://www.halo.run/) 的主题脚手架：在 `src/` 中编写模板与前端资源，经构建生成 Halo 实际读取的 `templates/` 目录。
+一个移植自 Typecho 主题 [whitespace 留白](https://kehua.me) 的 [Halo](https://www.halo.run/) 主题，主打极简留白风格与清晰的排版。
 
-官方主题开发指南：<https://docs.halo.run/developer-guide/theme/prepare>
+> 主题名 `whitespace`，显示名 **Whitespace 留白**，版本 `0.1.0`，作者 **暖心向阳335**。
+> 要求 Halo ≥ 2.26.0。源码在 `src/`，构建产物在 `templates/`。
+> 源码仓库：https://git.nxxy335.top/nxxy335/halo-theme-whitespace
 
-## 技术栈
+## 特性
 
-| 类别     | 说明                                                                                                                                                                                                  |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 运行时   | Halo 使用 **Thymeleaf** 渲染主题；模板变量与 Finder API 随 Halo 版本演进，请以[官方文档](https://docs.halo.run/developer-guide/theme/prepare)为准。                                                   |
-| 构建     | Vite，同时集成 [Vite Plus](https://viteplus.dev/)，集成格式化、Lint 等功能                                                                                                                            |
-| 语言     | **TypeScript**（`tsc` 参与 `build` 脚本）                                                                                                                                                             |
-| 主题插件 | [`@halo-dev/vite-plugin-halo-theme`](https://www.npmjs.com/package/@halo-dev/vite-plugin-halo-theme) — 源码见 [halo-sigs/vite-plugin-halo-theme](https://github.com/halo-sigs/vite-plugin-halo-theme) |
-| 打包发布 | [`@halo-dev/theme-package-cli`](https://github.com/halo-dev/theme-package-cli) — 将主题打成 ZIP 供控制台上传                                                                                          |
-| 包管理   | **pnpm**（版本见 `package.json` 的 `packageManager`）                                                                                                                                                 |
+- 极简留白风格，自带浅色 / 深色双主题（跟随系统或手动切换，记忆访客选择）
+- 首页可选展示最新一篇置顶文章（`featured` 设置）
+- 文章 / 页面 / 归档 / 分类 / 标签 / 作者 / 关于 等完整页面
+- 文章页结构化数据（Schema.org `BlogPosting` JSON-LD）与社交分享标签（canonical / Open Graph / Twitter Card），均可在主题设置中关闭
+- 内置搜索按钮（依赖官方 `PluginSearchWidget` 插件，未安装则不显示）
+- 阅读进度条、代码块复制、相对时间、回到顶部、移动端菜单等交互
+- 多语言：`i18n/default.properties`（回退）+ `i18n/zh_CN.properties`
+- 提供 `layout.html` 布局契约，供使用布局契约的插件页面复用主题导航 / 页脚 / 暗色样式
+
+## 插件适配
+
+主题已为以下插件提供适配页面（在 `src/` 下以同名模板提供，构建后进入 `templates/`）：
+
+- **plugin-moments**：`/moments` 瞬间页
+- **plugin-photos**：`/photos` 图库页
+- **plugin-links**：`/links` 友链页；并额外提供
+  - `links-apply.html`：访客友链申请表单（调用插件公共 REST API，含图形验证码）
+  - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）
+- **halo-weread-plugin**：`weread.html` 微信读书书架页（前端拉取插件 `/shelf-html` 并注入）
+- **留言板**：`page_guestbook.html` 以评论区作为留言板的单页模板
+- **plugin-extra-api**：API 扩展包（无独立页面），主题已适配其 shiki 代码高亮与暗色样式
+
+> `weread` / `留言板` / `友链申请` / `链接订阅` 均为「自定义页面模板」，在控制台新建单页并选择对应模板即可启用。
 
 ## 目录结构
 
-- **`src/` 是源码目录**：在此维护 `.html` 页面与 `partials/` 片段、`css/`、`js/`（含 TS）等。插件在 **Vite 构建时** 处理 `<include>` / `<slot>` 等语法（与服务器上 **Thymeleaf 运行时** 互不替代，可同时使用）。
-- **`templates/` 是构建产物**：Halo 只认主题根目录下的 `templates/`（内含页面 HTML 与 `templates/assets/` 等）。**不要**把 `src/` 当作 Halo 直接读取的路径；开发或发版前需执行构建，使 `templates/` 与当前源码一致。
-
 ```
-.
-├── src/                 # 源码：页面 HTML、partials、css、js
-├── public/              # 可选；目录内容原样复制到 templates/ 根目录
-├── templates/           # 构建生成
-├── theme.yaml           # 主题元数据（必填）
-├── settings.yaml        # 控制台主题设置表单（可选）
-├── vite.config.ts
-└── package.json
+src/                      源码目录（在此编辑）
+├── partials/
+│   ├── layout.html       公共布局（导航 / 页脚 / 主题切换 / 脚本入口）
+│   └── seo.html          SEO 片段（canonical / OG / Twitter，受开关控制）
+├── modules/
+│   ├── post-card.html    文章列表卡片
+│   ├── post-meta.html    文章元信息（时间 / 分类 / 浏览量）
+│   └── pagination.html   分页导航
+├── error/                错误页（404 / 通用错误）
+│   ├── 404.html
+│   └── error.html
+├── css/main.css          全部样式（含双主题变量、响应式、打印）
+├── js/main.ts            全站脚本
+├── js/post.ts            文章页脚本（代码复制 / 阅读进度）
+├── index.html  post.html  page.html  page_about.html
+├── archives.html  category.html  tag.html  categories.html  tags.html  author.html
+└── i18n/                 多语言消息
+theme.yaml                主题元数据（必填）
+settings.yaml             控制台主题设置表单
+templates/                构建产物（Halo 实际读取，勿手动编辑）
 ```
 
-### `@halo-dev/vite-plugin-halo-theme`
+> `src/` 与 `templates/` 的关系：`src/` 经 Vite 构建生成 `templates/`。开发或发版前务必执行构建，使 `templates/` 与源码一致。**不要**手动修改 `templates/`。
 
-1. **多页入口**：自动将 `src/` 下（除 `src/partials/` 外）的 `.html` 作为入口，输出到 `templates/` 下同名文件（例如 `src/index.html` → `templates/index.html`）。
-2. **静态资源**：`src/` 中的 CSS/JS 由 Vite 打包进 `templates/assets/`；`public/` 的目录内容会原样复制到 `templates/` 根目录（不经打包）。例如，需要生成 `templates/assets/images/logo.png` 时，应将源文件放在 `public/assets/images/logo.png`。
-3. **模板复用**：支持构建期 `<include>`、`<slot>`，减轻纯 Thymeleaf 片段的重复书写。
-4. **资源路径约定**：所有 HTML（含 `partials`）里引用静态资源时，路径按 **`src/` 根** 解析，而不是按当前文件所在子目录；说明见 [vite-plugin-halo-theme](https://github.com/halo-sigs/vite-plugin-halo-theme)。
-
-## 开发
+## 开发与构建
 
 ```bash
-git clone git@github.com:halo-dev/theme-vite-starter.git ~/halo2-dev/themes/theme-vite-starter
-cd ~/halo2-dev/themes/theme-vite-starter
-pnpm install
-pnpm dev
+pnpm install        # 安装依赖
+pnpm dev            # 监听模式构建（开发时用）
+pnpm build-only     # 仅构建（tsc + vp build），生成 templates/
+pnpm build          # 构建并打包为可上传的 ZIP（theme-package-cli）
+pnpm check          # 格式化 + Lint 修复
 ```
 
-`pnpm dev` 等价于对主题执行 `vp build --watch`：修改 `src/` 后会持续重新生成 `templates/`。将主题目录链到或复制到 Halo 的 `themes/<metadata.name>/` 后，在控制台安装并启用主题即可预览。
+构建输出：
 
-开发 Halo 端建议关闭 Thymeleaf 缓存（例如环境变量 `SPRING_THYMELEAF_CACHE=false` 或配置 `spring.thymeleaf.cache: false`），便于模板热更新调试。
+- 页面与片段 → `templates/*.html`、`templates/modules/*.html`、`templates/error/*.html`
+- 静态资源 → `templates/assets/*`（文件名带内容哈希，运行时以 `/themes/whitespace/assets/...` 提供）
 
-## 构建与打包
+## 主题设置
 
-```bash
-pnpm build
-```
+在 Halo 控制台「主题 → 设置」中可配置：
 
-该命令会执行 TypeScript 检查、`vp build` 生成 `templates/`，并调用 `theme-package` 生成可分发的 ZIP。默认会打包 `templates/`、`theme.yaml` / `settings.yaml` 等必要文件，详见 [theme-package-cli](https://github.com/halo-dev/theme-package-cli)。
+| 分组    | 字段               | 说明                                         |
+| ------- | ------------------ | -------------------------------------------- |
+| basic   | color_scheme       | 默认配色：跟随系统 / 浅色 / 深色             |
+| basic   | footer_copyright   | 页脚自定义版权（支持 HTML，留空不显示）     |
+| featured| enable             | 首页是否展示置顶文章                         |
+| about   | avatar / bio / github_url / twitter_url / contact_email | 关于页（自定义模板 `page_about.html`）内容 |
+| seo     | enable_metadata    | 输出 canonical / Open Graph / Twitter Card  |
+| seo     | enable_structured_data | 输出文章页 BlogPosting JSON-LD            |
 
-仅需要产物目录、不需要 ZIP 时：
+## 约定与说明
 
-```bash
-pnpm build-only
-```
+- Logo / favicon / SEO description·keywords / 代码注入优先使用 Halo 系统设置；主题仅输出 canonical、OG、Twitter 与结构化数据（可在 `seo` 分组关闭，避免与插件重复）。
+- 社交分享 / 结构化数据中用 `status.permalink` 与 `site.routes.*` 拼出地址，不写死可配置路由。
+- 搜索由官方 `PluginSearchWidget` 插件提供，按钮仅在插件可用时出现。
+- 浏览量来自 Halo 原生统计（`post.stats.visit`），无需主题自行计数。
 
-## 其他脚本
+## 致谢
 
-| 命令         | 作用                                     |
-| ------------ | ---------------------------------------- |
-| `pnpm check` | `vp check --fix`（执行格式化和代码检查） |
-
-## Agent Skills
-
-仓库在 `.agents/skills/` 下内置了 **Halo 主题开发** 相关的 Agent Skill（例如 `halo-theme-dev`），整理了 Thymeleaf 要点、Finder API、`theme.yaml` / `settings.yaml`、vite 插件用法等参考材料。若在 Cursor 等支持 Agent Skills 的环境里开发，启用后可让 AI 更贴合 Halo 主题的约定来辅助编写与修改主题。
+- 原主题：[whitespace 留白](https://kehua.me) by kehua
+- 基于 Halo 官方 [theme-vite-starter](https://github.com/halo-dev/theme-vite-starter) 脚手架移植

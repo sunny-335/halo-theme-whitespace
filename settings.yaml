@@ -1,13 +1,76 @@
 apiVersion: v1alpha1
 kind: Setting
 metadata:
-  name: theme-vite-starter-setting
+  name: whitespace-setting
 spec:
   forms:
-    - group: styles
-      label: 样式
+    - group: basic
+      label: 基础
       formSchema:
-        - $formkit: color
-          name: background_color
-          label: 背景颜色
-          value: "#f2f2f2"
+        - $formkit: radio
+          name: color_scheme
+          label: 默认配色
+          value: system
+          help: 首次访问时使用的配色，访客手动切换后以访客选择为准
+          options:
+            - label: 跟随系统
+              value: system
+            - label: 浅色
+              value: light
+            - label: 深色
+              value: dark
+        - $formkit: textarea
+          name: footer_copyright
+          label: 自定义版权信息
+          value: ""
+          placeholder: 支持编写 HTML，留空则不显示
+          help: 显示在页脚的自定义版权信息
+    - group: featured
+      label: 置顶文章
+      formSchema:
+        - $formkit: checkbox
+          name: enable
+          label: 首页展示置顶文章
+          value: true
+          help: 在首页顶部以大标题样式展示最新的一篇置顶文章（需在文章设置中开启置顶）
+    - group: about
+      label: 关于页面
+      formSchema:
+        - $formkit: attachment
+          name: avatar
+          label: 博主头像
+          value: ""
+          help: 关于页面展示的头像，留空则使用站点 Logo
+        - $formkit: textarea
+          name: bio
+          label: 个人简介
+          value: "一个热爱生活、热爱技术的普通人"
+          help: 关于页面头像下方显示的简介
+        - $formkit: text
+          name: github_url
+          label: GitHub 链接
+          value: ""
+          placeholder: https://github.com/yourname
+        - $formkit: text
+          name: twitter_url
+          label: Twitter 链接
+          value: ""
+          placeholder: https://x.com/yourname
+        - $formkit: text
+          name: contact_email
+          label: 联系邮箱
+          value: ""
+          placeholder: mail@example.com
+    - group: seo
+      label: SEO
+      formSchema:
+        - $formkit: checkbox
+          name: enable_metadata
+          label: 输出 canonical 和社交分享标签
+          value: true
+          help: 输出 canonical、Open Graph 与 Twitter Card 标签；若已由插件提供，请关闭以避免重复
+        - $formkit: checkbox
+          name: enable_structured_data
+          label: 输出文章结构化数据
+          value: true
+          help: 在文章页输出 Schema.org BlogPosting JSON-LD；若已由插件提供，请关闭

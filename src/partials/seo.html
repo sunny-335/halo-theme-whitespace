@@ -1,0 +1,40 @@
+<!--
+  公共 SEO 片段：输出 canonical、Open Graph 与 Twitter Card。
+  由各页面通过 th:with 提供 seoTitle / seoUrl / seoDesc / seoImage / seoType 变量。
+  description / keywords 由 Halo 自动注入，此处不重复输出。
+-->
+<th:block th:fragment="seo" th:if="${theme.config?.seo?.enable_metadata}">
+  <link rel="canonical" th:href="@{${seoUrl}}" />
+  <meta property="og:site_name" th:content="${site.title}" />
+  <meta
+    property="og:type"
+    th:content="${seoType != null ? seoType : 'website'}"
+  />
+  <meta property="og:title" th:content="${seoTitle}" />
+  <meta property="og:url" th:content="${seoUrl}" />
+  <meta
+    th:if="${seoDesc != null and not #strings.isEmpty(seoDesc)}"
+    property="og:description"
+    th:content="${seoDesc}"
+  />
+  <meta
+    th:if="${seoImage != null and not #strings.isEmpty(seoImage)}"
+    property="og:image"
+    th:content="${seoImage}"
+  />
+  <meta
+    name="twitter:card"
+    th:content="${seoImage != null and not #strings.isEmpty(seoImage)} ? 'summary_large_image' : 'summary'"
+  />
+  <meta name="twitter:title" th:content="${seoTitle}" />
+  <meta
+    th:if="${seoDesc != null and not #strings.isEmpty(seoDesc)}"
+    name="twitter:description"
+    th:content="${seoDesc}"
+  />
+  <meta
+    th:if="${seoImage != null and not #strings.isEmpty(seoImage)}"
+    name="twitter:image"
+    th:content="${seoImage}"
+  />
+</th:block>

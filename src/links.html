@@ -1,0 +1,105 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title th:text="|${linksTitle} - ${site.title}|">链接</title>
+    <style>
+      .links-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin: 1rem 0 1.5rem;
+      }
+      .links-nav a {
+        color: var(--color-link);
+      }
+      .links-nav a:hover,
+      .links-nav a.active {
+        color: var(--color-link-hover);
+        font-weight: 600;
+      }
+      .links-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+        gap: 1rem;
+      }
+      .links-list li {
+        margin: 0;
+      }
+      .links-list a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-secondary);
+        color: var(--color-text);
+        transition: border-color var(--transition-fast);
+      }
+      .links-list a:hover {
+        border-color: var(--color-primary);
+      }
+      .links-list img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .links-list .links-name {
+        font-weight: 600;
+      }
+      .links-list .links-desc {
+        margin: 0.25rem 0 0;
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <section class="links">
+      <h1 th:text="${linksTitle}">链接</h1>
+
+      <nav class="links-nav" aria-label="链接分组">
+        <a th:href="@{/links}" th:classappend="${group == null} ? 'active'">全部</a>
+        <a
+          th:each="item : ${simpleGroups}"
+          th:href="@{/links(group=${item.metadata.name})}"
+          th:classappend="${group == item.metadata.name} ? 'active'"
+          th:text="${item.spec.displayName}"
+        ></a>
+      </nav>
+
+      <ul th:if="${not #lists.isEmpty(links)}" class="links-list">
+        <li th:each="link : ${links}">
+          <a th:href="@{${link.spec.url}}" target="_blank" rel="noopener noreferrer">
+            <img
+              th:if="${not #strings.isEmpty(link.spec.logo)}"
+              th:src="@{${link.spec.logo}}"
+              alt=""
+              loading="lazy"
+            />
+            <span>
+              <span class="links-name" th:text="${link.spec.displayName}"
+                >链接名称</span
+              >
+              <p
+                class="links-desc"
+                th:if="${not #strings.isEmpty(link.spec.description)}"
+                th:text="${link.spec.description}"
+              ></p>
+            </span>
+          </a>
+        </li>
+      </ul>
+      <p th:unless="${not #lists.isEmpty(links)}">暂无链接</p>
+    </section>
+
+    <div class="comments-section" th:if="${haloCommentEnabled}">
+      <halo:comment group="plugin.halo.run" kind="Plugin" th:attr="name=${pluginName}" />
+    </div>
+  </div>
+</include>

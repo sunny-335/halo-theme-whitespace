@@ -1,0 +1,67 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title
+      th:text="|${singlePage.spec.title} - ${site.title}|"
+      th:if="${singlePage != null}"
+    >
+      微信读书
+    </title>
+    <style>
+      .weread-mount {
+        margin: 2rem auto;
+        min-height: 12rem;
+      }
+      .weread-loading {
+        text-align: center;
+        color: var(--color-text-muted);
+        padding: 3rem 0;
+      }
+      .weread-error {
+        text-align: center;
+        color: var(--color-primary);
+        padding: 3rem 0;
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <section class="weread-page">
+      <h1 th:text="${singlePage.spec.title}" th:if="${singlePage != null}">微信读书</h1>
+      <p
+        class="weread-intro"
+        th:if="${singlePage.spec.description != null}"
+        th:utext="${singlePage.spec.description}"
+      ></p>
+
+      <div class="weread-mount" id="wr-mount">
+        <p class="weread-loading">正在加载书架…</p>
+      </div>
+    </section>
+  </div>
+
+  <script th:inline="none">
+    (function () {
+      var mount = document.getElementById("wr-mount");
+      var BASE = "/halo-weread-plugin/shelf-html";
+      fetch(BASE, { headers: { Accept: "text/html" } })
+        .then(function (r) {
+          if (!r.ok) throw new Error("shelf " + r.status);
+          return r.text();
+        })
+        .then(function (html) {
+          mount.innerHTML = html;
+          // 重新执行被注入的脚本（innerHTML 不会自动执行脚本）
+          mount.querySelectorAll("script").forEach(function (s) {
+            var el = document.createElement("script");
+            el.textContent = s.textContent;
+            document.body.appendChild(el);
+            el.remove();
+          });
+        })
+        .catch(function () {
+          mount.innerHTML =
+            '<p class="weread-error">书架加载失败，请确认已安装并启用 halo-weread-plugin 插件。</p>';
+        });
+    })();
+  </script>
+</include>

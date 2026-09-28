@@ -1,0 +1,38 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title th:text="|${error.status} - ${site.title}|">Error</title>
+  </template>
+
+  <div class="container">
+    <!-- 通用错误内容 -->
+    <div class="error-page">
+      <div class="error-code" th:text="${error.status != null ? error.status : 500}">
+        500
+      </div>
+      <h1
+        class="error-title"
+        th:text="${not #strings.isEmpty(error.title) ? error.title : 'Error'}"
+      >
+        Error
+      </h1>
+      <p
+        class="error-message"
+        th:if="${not #strings.isEmpty(error.detail)}"
+        th:text="${error.detail}"
+      ></p>
+      <div class="error-actions">
+        <a th:href="@{/}" class="error-btn" th:text="#{error.back.home}"
+          >Back to home</a
+        >
+        <button
+          type="button"
+          class="error-btn error-btn-secondary"
+          onclick="history.back()"
+          th:text="#{error.back.prev}"
+        >
+          Go back
+        </button>
+      </div>
+    </div>
+  </div>
+</include>

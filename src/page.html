@@ -1,20 +1,41 @@
-<include src="layout.html">
+<include src="partials/layout.html">
   <template name="head">
-    <title th:text="|${singlePage.spec.title} - ${site.title}|">Page Title</title>
+    <title th:text="|${singlePage.spec.title} - ${site.title}|">
+      Page Title
+    </title>
+    <th:block
+      th:with="seoTitle=${singlePage.spec.title}, seoUrl=${site.url + singlePage.status.permalink}, seoDesc=${singlePage.status.excerpt}, seoImage=${singlePage.spec.cover}, seoType='website'"
+    >
+      <include src="seo.html"></include>
+    </th:block>
   </template>
 
-  <article>
-    <header class="article-header">
-      <h1 class="article-title" th:text="${singlePage.spec.title}"></h1>
-    </header>
-    <div class="article-content" th:utext="${singlePage.content.content}"></div>
-  </article>
+  <div class="container">
+    <!-- 默认页面样式 -->
+    <article class="article-detail">
+      <header class="article-header">
+        <h1 class="article-title" th:text="${singlePage.spec.title}">
+          Page title
+        </h1>
+      </header>
 
-  <div th:if="${haloCommentEnabled}">
-    <halo:comment
-      group="content.halo.run"
-      kind="SinglePage"
-      th:attr="name=${singlePage.metadata.name}"
-    />
+      <div
+        class="article-cover"
+        th:if="${not #strings.isEmpty(singlePage.spec.cover)}"
+      >
+        <img th:src="${singlePage.spec.cover}" th:alt="${singlePage.spec.title}" />
+      </div>
+
+      <div class="article-content" th:utext="${singlePage.content.content}"></div>
+    </article>
+
+    <!-- 评论区 -->
+    <div th:if="${haloCommentEnabled}" class="comments-section">
+      <halo:comment
+        group="content.halo.run"
+        kind="SinglePage"
+        th:attr="name=${singlePage.metadata.name}"
+      />
+    </div>
   </div>
 </include>

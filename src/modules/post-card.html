@@ -1,0 +1,25 @@
+<!-- 文章列表卡片 -->
+<article
+  class="post"
+  th:fragment="post-card(post)"
+  th:classappend="${not #strings.isEmpty(post.spec.cover)} ? 'post-with-thumb'"
+>
+  <div class="post-thumb" th:if="${not #strings.isEmpty(post.spec.cover)}">
+    <a th:href="@{${post.status.permalink}}">
+      <img th:src="${post.spec.cover}" th:alt="${post.spec.title}" loading="lazy" />
+    </a>
+  </div>
+  <div class="post-content">
+    <h2 class="post-title">
+      <a th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"
+        >Post title</a
+      >
+    </h2>
+    <p
+      class="post-excerpt"
+      th:if="${not #strings.isEmpty(post.status.excerpt)}"
+      th:text="${post.status.excerpt}"
+    ></p>
+    <th:block th:replace="~{modules/post-meta :: post-meta(post=${post}, dateClass='post-date')}"></th:block>
+  </div>
+</article>

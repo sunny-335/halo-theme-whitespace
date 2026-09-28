@@ -1,0 +1,22 @@
+<th:block th:fragment="category-tree(cats)">
+  <ul class="category-tree">
+    <li class="category-tree-item" th:each="cat : ${cats}">
+      <a th:href="@{${cat.status.permalink}}" class="category-tree-link">
+        <span class="category-tree-name" th:text="${cat.spec.displayName}">Category</span>
+        <span
+          class="category-tree-count"
+          th:text="${cat.postCount}"
+          th:if="${cat.postCount != null and cat.postCount > 0}"
+          >0</span
+        >
+      </a>
+      <th:block
+        th:if="${cat.children != null and !#lists.isEmpty(cat.children)}"
+      >
+        <th:block
+          th:replace="~{modules/category-tree :: category-tree(cats=${cat.children})}"
+        ></th:block>
+      </th:block>
+    </li>
+  </ul>
+</th:block>

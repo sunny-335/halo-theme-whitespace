@@ -1,0 +1,95 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title
+      th:text="|${singlePage.spec.title} - ${site.title}|"
+      th:if="${singlePage != null}"
+    >
+      链接订阅
+    </title>
+    <style>
+      .feed-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .feed-item {
+        padding: 1.25rem 0;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .feed-item-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+      .feed-item-title a {
+        color: var(--color-link);
+      }
+      .feed-item-meta {
+        margin: 0.35rem 0;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+      .feed-item-summary {
+        margin: 0.5rem 0 0;
+        color: var(--color-text-secondary);
+        line-height: 1.7;
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <section class="feed">
+      <h1 th:text="${singlePage.spec.title}" th:if="${singlePage != null}">链接订阅</h1>
+      <p
+        class="feed-intro"
+        th:if="${singlePage.spec.description != null}"
+        th:utext="${singlePage.spec.description}"
+      ></p>
+
+      <div
+        th:if="${linkFeedFinder != null}"
+        th:with="feedPage=${linkFeedFinder.list({limit: 30})}"
+      >
+        <ul th:if="${not #lists.isEmpty(feedPage.items)}" class="feed-list">
+          <li class="feed-item" th:each="item : ${feedPage.items}">
+            <div class="feed-item-title">
+              <a th:href="@{${item.url}}" target="_blank" rel="noopener noreferrer">
+                <span th:text="${item.title}">标题</span>
+              </a>
+            </div>
+            <p class="feed-item-meta">
+              <span th:text="${item.linkName}">来源</span>
+              <span th:if="${item.author != null and item.author != ''}">
+                · <span th:text="${item.author}">作者</span></span
+              >
+              <span
+                th:if="${item.publishedAt != null}"
+                th:with="pt=${item.publishedAt}"
+              >
+                · <time
+                  th:datetime="${pt}"
+                  th:text="${#temporals.format(pt, 'yyyy-MM-dd HH:mm')}"
+                  >时间</time
+                ></span
+              >
+            </p>
+            <p
+              class="feed-item-summary"
+              th:if="${not #strings.isEmpty(item.summary)}"
+              th:utext="${item.summary}"
+            ></p>
+          </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(feedPage.items)}" class="no-results">
+          暂无订阅动态。请在 plugin-links 设置中开启「公开 RSS 订阅动态」。
+        </p>
+      </div>
+
+      <p
+        class="no-results"
+        th:if="${linkFeedFinder == null}"
+      >
+        未检测到 plugin-links，无法加载订阅动态。
+      </p>
+    </section>
+  </div>
+</include>

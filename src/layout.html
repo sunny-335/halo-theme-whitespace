@@ -1,0 +1,200 @@
+<!doctype html>
+<html
+  lang="zh-CN"
+  xmlns:th="https://www.thymeleaf.org"
+  th:lang="${#locale.toLanguageTag}"
+  th:fragment="html (head, content)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:if="${head == null}" th:text="${site.title}">Site Title</title>
+    <script th:inline="javascript">
+      (function () {
+        var preferred = /*[[${theme.config?.basic?.color_scheme ?: 'system'}]]*/ "system";
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {
+          /* ignore */
+        }
+        var resolved = stored || preferred;
+        if (resolved === "system") {
+          resolved = window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        }
+        document.documentElement.setAttribute("data-theme", resolved);
+      })();
+    </script>
+    <link rel="stylesheet" href="/css/main.css" />
+    <th:block th:if="${head != null}" th:replace="${head}" />
+    <script type="module" src="/js/main.ts"></script>
+  </head>
+  <body>
+    <!-- 头部导航 -->
+    <header class="header">
+      <div class="header-inner">
+        <a th:href="@{/}" class="logo">
+          <img
+            th:if="${not #strings.isEmpty(site.logo)}"
+            th:src="${site.logo}"
+            th:alt="${site.title}"
+            class="logo-img"
+          />
+          <span
+            th:if="${#strings.isEmpty(site.logo)}"
+            class="logo-text"
+            th:text="${site.title}"
+            >Site Title</span
+          >
+        </a>
+        <nav class="nav">
+          <th:block th:with="primaryMenu = ${menuFinder.getPrimary()}">
+            <a
+              th:if="${primaryMenu == null}"
+              class="nav-link"
+              th:href="@{/}"
+              th:text="#{nav.home}"
+              >Home</a
+            >
+            <th:block th:if="${primaryMenu != null}">
+              <a
+                th:each="item : ${primaryMenu.menuItems}"
+                th:href="@{${item.status.href}}"
+                th:text="${item.status.displayName}"
+                th:target="${item.spec.target?.value}"
+                class="nav-link"
+              ></a>
+            </th:block>
+          </th:block>
+        </nav>
+        <div class="header-actions">
+          <button
+            class="btn-icon"
+            id="theme-toggle"
+            type="button"
+            th:title="#{theme.toggle}"
+          >
+            <svg
+              class="icon icon-sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg
+              class="icon icon-moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <button
+            th:if="${pluginFinder.available('PluginSearchWidget')}"
+            class="btn-icon"
+            id="search-toggle"
+            type="button"
+            th:title="#{search.title}"
+          >
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+          <button
+            class="btn-icon mobile-menu-toggle"
+            id="mobile-menu-toggle"
+            type="button"
+            th:title="#{mobile.menu}"
+          >
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 移动端导航菜单 -->
+    <div class="mobile-nav" id="mobile-nav">
+      <th:block th:with="primaryMenu = ${menuFinder.getPrimary()}">
+        <a
+          th:if="${primaryMenu == null}"
+          class="mobile-nav-link"
+          th:href="@{/}"
+          th:text="#{nav.home}"
+          >Home</a
+        >
+        <th:block th:if="${primaryMenu != null}">
+          <a
+            th:each="item : ${primaryMenu.menuItems}"
+            th:href="@{${item.status.href}}"
+            th:text="${item.status.displayName}"
+            th:target="${item.spec.target?.value}"
+            class="mobile-nav-link"
+          ></a>
+        </th:block>
+      </th:block>
+    </div>
+
+    <main class="main">
+      <th:block th:replace="${content}" />
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="container">
+        <div
+          class="footer-copyright"
+          th:if="${not #strings.isEmpty(theme.config?.basic?.footer_copyright)}"
+          th:utext="${theme.config.basic.footer_copyright}"
+        ></div>
+        <p class="footer-theme">
+          Theme by
+          <a href="https://kehua.me" target="_blank" rel="noopener">kehua</a>
+        </p>
+        <halo:footer />
+      </div>
+    </footer>
+
+    <!-- 回到顶部 -->
+    <button
+      class="back-to-top"
+      id="back-to-top"
+      type="button"
+      th:title="#{back.to.top}"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+  </body>
+</html>

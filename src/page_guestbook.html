@@ -1,0 +1,53 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title
+      th:text="|${singlePage.spec.title} - ${site.title}|"
+      th:if="${singlePage != null}"
+    >
+      留言板
+    </title>
+    <style>
+      .guestbook-intro {
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-xl);
+        line-height: 1.7;
+      }
+      .guestbook-comments {
+        margin-top: var(--spacing-2xl);
+        border-top: 1px solid var(--color-border);
+        padding-top: var(--spacing-xl);
+      }
+      .guestbook-comments h2 {
+        font-size: 1.25rem;
+        margin: 0 0 var(--spacing-md);
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <article class="page-content guestbook-page">
+      <h1 th:text="${singlePage.spec.title}" th:if="${singlePage != null}">留言板</h1>
+
+      <div
+        class="article-content guestbook-intro"
+        th:if="${singlePage.status.excerpt != null}"
+        th:utext="${singlePage.status.excerpt}"
+      ></div>
+
+      <div
+        class="article-content"
+        th:if="${singlePage.content != null}"
+        th:utext="${singlePage.content.content}"
+      ></div>
+
+      <section class="guestbook-comments" th:if="${haloCommentEnabled}">
+        <h2>留言</h2>
+        <halo:comment
+          group="content.halo.run"
+          kind="SinglePage"
+          th:attr="name=${singlePage.metadata.name}"
+        />
+      </section>
+    </article>
+  </div>
+</include>

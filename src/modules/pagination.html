@@ -1,0 +1,37 @@
+<!--
+  分页导航。
+  context 为当前列表的路由前缀（如 '/'、'/archives/'、分类或标签 permalink + '/'），
+  页码链接由 context + 'page/' + n 构造，不硬编码可配置路由。
+-->
+<nav
+  class="pagination"
+  th:fragment="pagination(context, prevUrl, nextUrl, totalPages, page, hasPrevious, hasNext)"
+  th:if="${hasPrevious || hasNext}"
+>
+  <a
+    th:if="${hasPrevious}"
+    th:href="@{${prevUrl}}"
+    class="pagination-item pagination-prev"
+  >
+    <span>←</span>
+    <span th:text="#{pagination.previous}">Previous</span>
+  </a>
+  <span class="pagination-pages">
+    <a
+      th:each="i : ${#numbers.sequence(1, totalPages)}"
+      th:href="@{${i == 1 ? context : (context + 'page/' + i)}}"
+      th:text="${i}"
+      class="pagination-item"
+      th:classappend="${i == page} ? 'active'"
+      >1</a
+    >
+  </span>
+  <a
+    th:if="${hasNext}"
+    th:href="@{${nextUrl}}"
+    class="pagination-item pagination-next"
+  >
+    <span th:text="#{pagination.next}">Next</span>
+    <span>→</span>
+  </a>
+</nav>

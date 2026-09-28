@@ -1,0 +1,26 @@
+<!-- 文章元信息（时间 / 分类 / 浏览量），供列表卡片与详情页复用 -->
+<div class="post-meta" th:fragment="post-meta(post, dateClass)">
+  <time
+    th:if="${post.spec.publishTime != null}"
+    th:class="${dateClass}"
+    th:datetime="${post.spec.publishTime}"
+    th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+    data-relative-time
+  ></time>
+  <th:block th:if="${not #lists.isEmpty(post.categories)}">
+    <span class="post-meta-sep">·</span>
+    <span class="post-category">
+      <a
+        th:each="cat : ${post.categories}"
+        th:href="@{${cat.status.permalink}}"
+        th:text="${cat.spec.displayName}"
+      ></a>
+    </span>
+  </th:block>
+  <th:block th:if="${post.stats != null and post.stats.visit != null and post.stats.visit > 0}">
+    <span class="post-meta-sep">·</span>
+    <span class="post-views" th:text="#{post.views(${post.stats.visit})}"
+      >1 views</span
+    >
+  </th:block>
+</div>
