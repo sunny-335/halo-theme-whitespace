@@ -211,8 +211,16 @@
         <p
           class="footer-theme"
           th:if="${theme.config?.basic?.show_theme_credit != false}"
-          th:text="#{footer.theme(${theme.config?.basic?.theme_credit_text ?: '暖心向阳335'})}"
-        >Theme by kehua</p>
+        >
+          <a
+            class="footer-theme-link"
+            th:href="${theme.config?.basic?.theme_credit_url ?: 'https://git.nxxy335.top/nxxy335/halo-theme-whitespace'}"
+            target="_blank"
+            rel="noopener noreferrer"
+            th:text="#{footer.theme(${theme.config?.basic?.theme_credit_text ?: 'WhiteSpace'})}"
+            >Theme by WhiteSpace</a
+          >
+        </p>
         <div
           class="footer-beian"
           th:if="${not #strings.isEmpty(theme.config?.footer?.icp_number) or not #strings.isEmpty(theme.config?.footer?.police_number)}"

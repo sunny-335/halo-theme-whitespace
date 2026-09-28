@@ -28,10 +28,26 @@
         font-size: 0.8rem;
         color: var(--color-text-muted);
       }
+      .feed-item-author {
+        color: var(--color-text-secondary);
+        transition: color var(--transition-fast);
+      }
+      .feed-item-author:hover {
+        color: var(--color-primary);
+      }
+      .feed-item-sep {
+        color: var(--color-border);
+        margin: 0 0.3rem;
+      }
       .feed-item-summary {
         margin: 0.5rem 0 0;
         color: var(--color-text-secondary);
         line-height: 1.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
     </style>
   </template>
@@ -57,15 +73,35 @@
               </a>
             </div>
             <p class="feed-item-meta">
-              <span th:text="${item.linkName}">来源</span>
-              <span th:if="${item.author != null and item.author != ''}">
-                · <span th:text="${item.author}">作者</span></span
+              <th:block
+                th:if="${item.author != null and item.author != ''}"
               >
+                <a
+                  th:if="${item.authorUrl != null and item.authorUrl != ''}"
+                  class="feed-item-author"
+                  th:href="@{${item.authorUrl}}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  th:text="${item.author}"
+                  >作者</a
+                >
+                <span
+                  th:unless="${item.authorUrl != null and item.authorUrl != ''}"
+                  class="feed-item-author"
+                  th:text="${item.author}"
+                  >作者</span
+                >
+                <span
+                  th:if="${item.publishedAt != null}"
+                  class="feed-item-sep"
+                  >·</span
+                >
+              </th:block>
               <span
                 th:if="${item.publishedAt != null}"
                 th:with="pt=${item.publishedAt}"
               >
-                · <time
+                <time
                   th:datetime="${pt}"
                   th:text="${#temporals.format(pt, 'yyyy-MM-dd HH:mm')}"
                   >时间</time

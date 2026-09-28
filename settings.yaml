@@ -33,9 +33,15 @@ spec:
         - $formkit: text
           name: theme_credit_text
           label: 署名名称
-          value: "暖心向阳335"
+          value: "WhiteSpace"
           placeholder: 显示在「Theme by」之后的名称
           help: 页脚主题署名的展示名称
+        - $formkit: text
+          name: theme_credit_url
+          label: 署名链接
+          value: "https://git.nxxy335.top/nxxy335/halo-theme-whitespace"
+          placeholder: 点击署名跳转的地址
+          help: 页脚「Theme by」署名的跳转链接，默认主题仓库地址
         - $formkit: checkbox
           name: show_word_count
           label: 文章卡片显示字数

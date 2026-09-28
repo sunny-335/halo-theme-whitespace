@@ -15,7 +15,7 @@
 - 内置搜索按钮（依赖官方 `PluginSearchWidget` 插件，未安装则不显示）
 - 阅读进度条、代码块复制、相对时间、回到顶部、移动端菜单等交互
 - **二级导航**：菜单项的子项自动渲染为下拉菜单（桌面端 hover/focus 展开，移动端嵌套缩进展开）
-- **页脚可关闭的主题署名**：默认「Theme by 暖心向阳335」，可在设置中修改名称或整体关闭
+- **页脚可关闭的主题署名**：默认「Theme by WhiteSpace」并链接到主题仓库，可在设置中修改名称 / 链接或整体关闭
 - **页脚全站数据统计**：文章 / 分类 / 标签 / 评论 / 访问量 / 字数，可按项开关，整体可关闭
 - **文章卡片字数 + 阅读时长**：可在设置中关闭（需 `halo-plugin-extra-api` 提供数据）
 - 多语言：`i18n/default.properties`（回退）+ `i18n/zh_CN.properties`
@@ -28,7 +28,7 @@
 - **plugin-moments**：`/moments` 瞬间页
 - **plugin-photos**：`/photos` 图库页
 - **plugin-links**：`/links` 友链页；友链申请表单已**直接内嵌**在友链页底部（点击「申请友链」展开，调用插件公共 REST API，含图形验证码）；并额外提供
-  - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）
+  - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）；每条仅显示作者与发布时间，作者名链接到来源博客，摘要默认折叠为 5 行
 - **halo-weread-plugin**：`weread.html` 微信读书书架页（前端拉取插件 `/shelf-html` 并注入）
 - **plugin-douban**：`douban.html` 豆瓣收藏页（按「读过 / 在读 / 看过 / 在追」分栏展示书影音，使用 `doubanFinder.getMovies(...)`；未安装插件时显示提示）。在控制台新建单页并选择「豆瓣页面」模板即可启用
 - **留言板**：`page_guestbook.html` 以评论区作为留言板的单页模板

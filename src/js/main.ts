@@ -100,6 +100,11 @@ function initMobileNav(): void {
       closeMobileNav();
     }
   });
+
+  // 点击移动端菜单内的任意链接后自动收起
+  mobileNav.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+    link.addEventListener("click", closeMobileNav);
+  });
 }
 
 // ========================================
