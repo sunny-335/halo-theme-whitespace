@@ -74,3 +74,28 @@ spec:
           label: 输出文章结构化数据
           value: true
           help: 在文章页输出 Schema.org BlogPosting JSON-LD；若已由插件提供，请关闭
+    - group: footer
+      label: 页脚备案
+      formSchema:
+        - $formkit: text
+          name: icp_number
+          label: ICP 备案号
+          value: ""
+          placeholder: 京ICP备12345678号
+          help: 工信部备案号，留空则不显示
+        - $formkit: text
+          name: icp_url
+          label: ICP 备案查询链接
+          value: "https://beian.miit.gov.cn"
+          help: 点击备案号跳转的查询地址，默认工信部备案管理系统
+        - $formkit: text
+          name: police_number
+          label: 公网安备号
+          value: ""
+          placeholder: 京公网安备11000002000001号
+          help: 公安机关备案号，留空则不显示
+        - $formkit: text
+          name: police_url
+          label: 公网安备查询链接
+          value: "https://beian.mps.gov.cn"
+          help: 点击公网安备号跳转的地址，默认全国互联网安全管理服务平台

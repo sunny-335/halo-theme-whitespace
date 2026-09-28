@@ -91,6 +91,15 @@
                   >发布时间</time
                 >
               </a>
+              <th:block th:if="${pluginFinder.available('extra-api') and content != null}">
+                <span
+                  class="moment-words"
+                  th:with="wc=${extraApiStatsFinder.getContentWordCount(content.html)}"
+                  th:if="${wc != null and wc > 0}"
+                  th:text="#{post.words(${wc})}"
+                  >字数</span
+                >
+              </th:block>
             </header>
 
             <div

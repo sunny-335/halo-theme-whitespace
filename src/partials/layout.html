@@ -180,6 +180,35 @@
           Theme by
           <a href="https://kehua.me" target="_blank" rel="noopener">kehua</a>
         </p>
+        <div
+          class="footer-beian"
+          th:if="${not #strings.isEmpty(theme.config?.footer?.icp_number) or not #strings.isEmpty(theme.config?.footer?.police_number)}"
+        >
+          <a
+            class="footer-beian-item"
+            th:if="${not #strings.isEmpty(theme.config?.footer?.icp_number)}"
+            th:href="${theme.config?.footer?.icp_url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            th:text="${theme.config?.footer?.icp_number}"
+            >ICP</a
+          >
+          <a
+            class="footer-beian-item footer-police"
+            th:if="${not #strings.isEmpty(theme.config?.footer?.police_number)}"
+            th:href="${theme.config?.footer?.police_url}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              class="footer-police-icon"
+              src="https://beian.mps.gov.cn/img/footerPoliceIcon.png"
+              alt=""
+              loading="lazy"
+            />
+            <span th:text="${theme.config?.footer?.police_number}">公网安备</span>
+          </a>
+        </div>
         <halo:footer />
       </div>
     </footer>

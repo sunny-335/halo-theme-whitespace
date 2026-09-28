@@ -38,6 +38,17 @@
           Tags
         </div>
       </div>
+      <th:block th:if="${pluginFinder.available('extra-api')}">
+        <div class="archive-stat">
+          <div
+            class="archive-stat-number"
+            th:text="${extraApiStatsFinder.getPostWordCount()}"
+          >0</div>
+          <div class="archive-stat-label" th:text="#{archive.stats.words}">
+            Words
+          </div>
+        </div>
+      </th:block>
     </div>
 
     <!-- 按年归档 -->

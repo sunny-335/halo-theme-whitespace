@@ -23,4 +23,18 @@
       >1 views</span
     >
   </th:block>
+  <th:block th:if="${pluginFinder.available('extra-api')}">
+    <th:block th:with="wc=${extraApiStatsFinder.getPostWordCount({name: post.metadata.name})}">
+      <th:block th:if="${wc != null and wc > 0}">
+        <span class="post-meta-sep">·</span>
+        <span class="post-words" th:text="#{post.words(${wc})}">字数</span>
+        <span class="post-meta-sep">·</span>
+        <span
+          class="post-reading"
+          th:text="#{post.reading_time(${#numbers.formatInteger((wc + 399).divide(java.math.BigInteger.valueOf(400)), 0)})}"
+          >阅读时长</span
+        >
+      </th:block>
+    </th:block>
+  </th:block>
 </div>

@@ -23,14 +23,13 @@
 
 - **plugin-moments**：`/moments` 瞬间页
 - **plugin-photos**：`/photos` 图库页
-- **plugin-links**：`/links` 友链页；并额外提供
-  - `links-apply.html`：访客友链申请表单（调用插件公共 REST API，含图形验证码）
+- **plugin-links**：`/links` 友链页；友链申请表单已**直接内嵌**在友链页底部（点击「申请友链」展开，调用插件公共 REST API，含图形验证码）；并额外提供
   - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）
 - **halo-weread-plugin**：`weread.html` 微信读书书架页（前端拉取插件 `/shelf-html` 并注入）
 - **留言板**：`page_guestbook.html` 以评论区作为留言板的单页模板
-- **plugin-extra-api**：API 扩展包（无独立页面），主题已适配其 shiki 代码高亮与暗色样式
+- **plugin-extra-api**：API 扩展包（无独立页面），主题已适配其 shiki 代码高亮与暗色样式；并在文章卡片 / 详情页展示**字数 + 阅读时长**、归档页展示**全站总字数**、瞬间页展示**单条字数**（通过 `extraApiStatsFinder`，插件未安装时自动隐藏）
 
-> `weread` / `留言板` / `友链申请` / `链接订阅` 均为「自定义页面模板」，在控制台新建单页并选择对应模板即可启用。
+> `weread` / `留言板` / `链接订阅` 均为「自定义页面模板」，在控制台新建单页并选择对应模板即可启用。`/links` 友链页与内嵌的友链申请无需单独建单页。
 
 ## 目录结构
 
@@ -86,6 +85,8 @@ pnpm check          # 格式化 + Lint 修复
 | about   | avatar / bio / github_url / twitter_url / contact_email | 关于页（自定义模板 `page_about.html`）内容 |
 | seo     | enable_metadata    | 输出 canonical / Open Graph / Twitter Card  |
 | seo     | enable_structured_data | 输出文章页 BlogPosting JSON-LD            |
+| footer  | icp_number / icp_url | ICP 备案号与查询链接（默认工信部备案管理系统） |
+| footer  | police_number / police_url | 公网安备号与查询链接（默认全国互联网安全管理服务平台） |
 
 ## 约定与说明
 
@@ -93,6 +94,7 @@ pnpm check          # 格式化 + Lint 修复
 - 社交分享 / 结构化数据中用 `status.permalink` 与 `site.routes.*` 拼出地址，不写死可配置路由。
 - 搜索由官方 `PluginSearchWidget` 插件提供，按钮仅在插件可用时出现。
 - 浏览量来自 Halo 原生统计（`post.stats.visit`），无需主题自行计数。
+- 字数 / 阅读时长来自 `halo-plugin-extra-api` 的 `extraApiStatsFinder`（插件未安装时相关展示自动隐藏），全站字数为缓存计算结果。
 
 ## 致谢
 

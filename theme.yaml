@@ -33,10 +33,6 @@ spec:
         description: 以评论区作为留言板的单页模板
         screenshot:
         file: page_guestbook.html
-      - name: 友链申请页面
-        description: 适配 plugin-links 的访客友链申请表单
-        screenshot:
-        file: links-apply.html
       - name: 链接订阅页面
         description: 适配 plugin-links 的 RSS 订阅动态聚合页
         screenshot:

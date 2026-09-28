@@ -1113,6 +1113,38 @@ a.pagination-item:hover {
   color: var(--color-primary);
 }
 
+.footer-beian {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  margin-top: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.footer-beian-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-muted);
+}
+.footer-beian-item:hover {
+  color: var(--color-text);
+}
+.footer-police-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.post-words,
+.post-reading {
+  color: var(--color-text-muted);
+}
+.moment-words {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
 /* ========================================
    回到顶部按钮
    ======================================== */
