@@ -6,30 +6,27 @@
       .container {
         max-width: 75rem;
       }
-      :where(.photos-groups) {
-        margin: 1.5rem 0;
-      }
-      :where(.photos-groups__list, .photos-grid, .photos-card__tags) {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      :where(.photos-groups__list, .photos-card__tags) {
+
+      /* 相册内视图工具条 */
+      :where(.photos-toolbar) {
         display: flex;
+        align-items: center;
         flex-wrap: wrap;
         gap: 0.75rem;
+        margin-top: 1rem;
       }
-      :where(.photos-group__link) {
-        display: inline-flex;
-        gap: 0.25rem;
-        align-items: baseline;
+      :where(.photos-back) {
         color: var(--color-link);
+        font-size: 0.9rem;
       }
-      :where(.photos-group__link):hover {
+      :where(.photos-back):hover {
         color: var(--color-link-hover);
       }
-      :where(.photos-group.is-active .photos-group__link) {
+      :where(.photos-album-title) {
+        margin: 0;
+        font-size: 1.05rem;
         font-weight: 600;
+        flex: 1 1 auto;
       }
 
       /* 相册网格 */
@@ -44,6 +41,20 @@
         );
         gap: 1.5rem;
       }
+      /* 打开某个相册后：只显示该相册，卡片收起、瀑布流展开 */
+      :where(.albums-grid.is-album-open) {
+        display: block;
+      }
+      :where(.albums-grid.is-album-open .albums-item) {
+        display: none;
+      }
+      :where(.albums-grid.is-album-open .albums-item.is-active) {
+        display: block;
+      }
+      :where(.albums-item.is-active .albums-card) {
+        display: none;
+      }
+
       :where(.albums-card) {
         display: block;
         color: var(--color-text);
@@ -103,6 +114,9 @@
         columns: 3;
         column-gap: 1rem;
       }
+      :where(.photos-masonry[hidden]) {
+        display: none;
+      }
       :where(.photos-masonry > li) {
         break-inside: avoid;
         margin: 0 0 1rem;
@@ -137,11 +151,6 @@
       }
 
       /* 预览模式切换 */
-      :where(.photos-toolbar) {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
-      }
       :where(.photos-preview-toggle) {
         padding: 0.4rem 0.9rem;
         border: 1px solid var(--color-border);
@@ -161,13 +170,6 @@
         color: var(--color-text-muted);
         padding: 2rem 0;
       }
-      :where(.photos-pagination) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
     </style>
   </template>
 
@@ -177,203 +179,167 @@
         <h1 class="photos-header__title" th:text="${title}">图库</h1>
       </header>
 
-      <nav class="photos-groups" aria-label="照片分组">
-        <ul class="photos-groups__list">
-          <li
-            class="photos-group"
-            th:classappend="${#strings.isEmpty(group)} ? 'is-active' : ''"
-          >
-            <a
-              class="photos-group__link"
-              th:href="${photoUrl.list()}"
-              th:attr="aria-current=${#strings.isEmpty(group) ? 'page' : null}"
-              >全部相册</a
-            >
-          </li>
-          <li
-            class="photos-group"
-            th:each="photoGroup : ${groups}"
-            th:classappend="${group == photoGroup.metadata.name} ? 'is-active' : ''"
-          >
-            <a
-              class="photos-group__link"
-              th:href="${photoUrl.list(photoGroup.metadata.name)}"
-              th:attr="aria-current=${group == photoGroup.metadata.name ? 'page' : null}"
-            >
-              <span
-                class="photos-group__name"
-                th:text="${photoGroup.spec.displayName}"
-                >相册</span
-              >
-              <span
-                class="photos-group__count"
-                th:if="${photoGroup.status != null and photoGroup.status.photoCount != null}"
-                th:text="|(${photoGroup.status.photoCount})|"
-              ></span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <!-- 相册内视图工具条：打开具体相册时显示 -->
+      <div class="photos-toolbar" id="photos-toolbar" hidden>
+        <a
+          class="photos-back"
+          th:href="${photoUrl != null ? photoUrl.list() : '/photos'}"
+          th:text="#{photos.back}"
+          >返回全部相册</a
+        >
+        <h2 class="photos-album-title" id="photos-album-title"></h2>
+        <button
+          class="photos-preview-toggle"
+          id="photos-preview-toggle"
+          type="button"
+          th:attr="data-default=${theme.config?.photos?.preview_default != false ? 'on' : 'off'},data-global=${theme.config?.basic?.enable_lightbox != false ? '1' : '0'}"
+        >
+          预览模式
+        </button>
+      </div>
 
-      <!-- 相册视图：按分组展示各相册 -->
-      <th:block th:if="${#strings.isEmpty(group)}">
-        <th:block th:with="albums=${photoFinder.groupBy()}">
-          <ul class="albums-grid" th:if="${not #lists.isEmpty(albums)}">
-            <li th:each="album : ${albums}">
-              <a
-                class="albums-card"
-                th:href="${photoUrl.list(album.metadata.name)}"
-                th:aria-label="|查看相册 ${album.spec.displayName}|"
-                th:title="|查看相册 ${album.spec.displayName}|"
+      <th:block th:with="albums=${photoFinder.groupBy()}">
+        <ul
+          class="albums-grid"
+          id="albums-grid"
+          th:if="${not #lists.isEmpty(albums)}"
+        >
+          <li
+            class="albums-item"
+            th:each="album : ${albums}"
+            th:attr="data-album=${album.metadata.name}"
+            th:data-title="${album.spec.displayName}"
+          >
+            <th:block th:with="rawPhotos=${album.photos}">
+              <th:block
+                th:with="albumPhotos=${(rawPhotos != null and !#lists.isEmpty(rawPhotos)) ? rawPhotos : photoFinder.listBy(album.metadata.name)}"
               >
-                <span class="albums-card__cover">
-                  <th:block th:with="rawPhotos=${album.photos}">
+                <a
+                  class="albums-card"
+                  th:href="${photoUrl.list(album.metadata.name)}"
+                  th:aria-label="|查看相册 ${album.spec.displayName}|"
+                  th:title="|查看相册 ${album.spec.displayName}|"
+                >
+                  <span class="albums-card__cover">
                     <img
-                      th:if="${rawPhotos != null and !#lists.isEmpty(rawPhotos)}"
-                      th:src="${rawPhotos[0].spec.cover != null and !#strings.isEmpty(rawPhotos[0].spec.cover) ? rawPhotos[0].spec.cover : rawPhotos[0].spec.url}"
+                      th:if="${not #lists.isEmpty(albumPhotos)}"
+                      th:src="${albumPhotos[0].spec.cover != null and !#strings.isEmpty(albumPhotos[0].spec.cover) ? albumPhotos[0].spec.cover : albumPhotos[0].spec.url}"
                       th:alt="${album.spec.displayName}"
                       loading="lazy"
                     />
                     <th:block
-                      th:unless="${rawPhotos != null and !#lists.isEmpty(rawPhotos)}"
+                      th:if="${not #lists.isEmpty(theme.config?.photos?.album_covers)}"
                     >
-                      <th:block
-                        th:with="fbPhotos=${photoFinder.listBy(album.metadata.name)}"
-                      >
-                        <img
-                          th:if="${not #lists.isEmpty(fbPhotos)}"
-                          th:src="${fbPhotos[0].spec.cover != null and !#strings.isEmpty(fbPhotos[0].spec.cover) ? fbPhotos[0].spec.cover : fbPhotos[0].spec.url}"
-                          th:alt="${album.spec.displayName}"
-                          loading="lazy"
-                        />
-                      </th:block>
+                      <img
+                        class="album-cover-custom"
+                        th:each="cv : ${theme.config.photos.album_covers}"
+                        th:if="${cv != null and cv.group == album.metadata.name and not #strings.isEmpty(cv.cover)}"
+                        th:src="${cv.cover}"
+                        th:alt="${album.spec.displayName}"
+                        loading="lazy"
+                      />
                     </th:block>
-                  </th:block>
-                  <th:block
-                    th:if="${not #lists.isEmpty(theme.config?.photos?.album_covers)}"
+                  </span>
+                  <p class="albums-card__name" th:text="${album.spec.displayName}">
+                    相册
+                  </p>
+                  <p
+                    class="albums-card__count"
+                    th:if="${album.status != null and album.status.photoCount != null}"
+                    th:text="#{photos.photo_count(${album.status.photoCount})}"
                   >
-                    <img
-                      class="album-cover-custom"
-                      th:each="cv : ${theme.config.photos.album_covers}"
-                      th:if="${cv != null and cv.group == album.spec.displayName and not #strings.isEmpty(cv.cover)}"
-                      th:src="${cv.cover}"
-                      th:alt="${album.spec.displayName}"
-                      loading="lazy"
-                    />
-                  </th:block>
-                </span>
-                <p
-                  class="albums-card__name"
-                  th:text="${album.spec.displayName}"
-                >
-                  相册
-                </p>
-                <p
-                  class="albums-card__count"
-                  th:if="${album.status != null and album.status.photoCount != null}"
-                  th:text="#{photos.photo_count(${album.status.photoCount})}"
-                >
-                  12 张照片
-                </p>
-                <span class="albums-card__more">查看相册 →</span>
-              </a>
-            </li>
-          </ul>
-          <p class="photos-empty" th:if="${#lists.isEmpty(albums)}" role="status">
-            暂无相册
-          </p>
-        </th:block>
-      </th:block>
-
-      <!-- 相册内瀑布流视图 -->
-      <th:block th:unless="${#strings.isEmpty(group)}">
-        <th:block
-          th:with="hasItems=${photos != null and photos.items != null and !#lists.isEmpty(photos.items)}"
-        >
-          <th:block
-            th:with="groupPhotos=${hasItems ? photos.items : photoFinder.listBy(group)}"
-          >
-            <div class="photos-toolbar" th:if="${not #lists.isEmpty(groupPhotos)}">
-              <button
-                class="photos-preview-toggle"
-                id="photos-preview-toggle"
-                type="button"
-                th:attr="data-default=${theme.config?.photos?.preview_default != false ? 'on' : 'off'}"
-              >
-                预览模式
-              </button>
-            </div>
-
-            <ul
-              class="photos-masonry"
-              th:if="${not #lists.isEmpty(groupPhotos)}"
-              th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
-            >
-              <li th:each="photo : ${groupPhotos}">
-                <a
-                  class="photos-card__media"
-                  th:href="${photoUrl.detail(photo)}"
-                  th:title="${photo.spec.displayName}"
-                >
-                  <img
-                    th:src="${#strings.isEmpty(photo.spec.cover) ? photo.spec.url : photo.spec.cover}"
-                    th:alt="${photo.spec.displayName}"
-                    loading="lazy"
-                  />
+                    12 张照片
+                  </p>
+                  <span class="albums-card__more">查看相册 →</span>
                 </a>
-                <p
-                  class="photos-card__caption"
-                  th:if="${not #strings.isEmpty(photo.spec.displayName)}"
-                  th:text="${photo.spec.displayName}"
-                >
-                  照片
-                </p>
-              </li>
-            </ul>
-            <p
-              class="photos-empty"
-              th:if="${#lists.isEmpty(groupPhotos)}"
-              role="status"
-            >
-              暂无照片
-            </p>
-          </th:block>
-        </th:block>
 
-        <nav
-          class="photos-pagination"
-          th:if="${photos != null and (photos.hasPrevious() or photos.hasNext())}"
-          aria-label="分页"
-        >
-          <a
-            class="photos-pagination__previous"
-            th:if="${photos.hasPrevious()}"
-            th:href="${photos.prevUrl}"
-            >上一页</a
-          >
-          <span class="photos-pagination__status">
-            第 <strong th:text="${photos.page}">1</strong> 页，共
-            <strong th:text="${photos.totalPages}">1</strong> 页
-          </span>
-          <a
-            class="photos-pagination__next"
-            th:if="${photos.hasNext()}"
-            th:href="${photos.nextUrl}"
-            >下一页</a
-          >
-        </nav>
+                <!-- 该相册的照片瀑布流：默认隐藏，由脚本按 URL 的 group 显示 -->
+                <ul
+                  class="photos-masonry"
+                  hidden
+                  th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
+                >
+                  <li th:each="photo : ${albumPhotos}">
+                    <a
+                      class="photos-card__media"
+                      th:href="${photoUrl.detail(photo)}"
+                      th:title="${photo.spec.displayName}"
+                    >
+                      <img
+                        th:src="${#strings.isEmpty(photo.spec.cover) ? photo.spec.url : photo.spec.cover}"
+                        th:alt="${photo.spec.displayName}"
+                        loading="lazy"
+                      />
+                    </a>
+                    <p
+                      class="photos-card__caption"
+                      th:if="${not #strings.isEmpty(photo.spec.displayName)}"
+                      th:text="${photo.spec.displayName}"
+                    >
+                      照片
+                    </p>
+                  </li>
+                </ul>
+              </th:block>
+            </th:block>
+          </li>
+        </ul>
+        <p class="photos-empty" th:if="${#lists.isEmpty(albums)}" role="status">
+          暂无相册
+        </p>
       </th:block>
     </section>
   </div>
 
   <script th:inline="none">
     (function () {
+      var grid = document.getElementById("albums-grid");
+      if (!grid) return;
+
+      var toolbar = document.getElementById("photos-toolbar");
+      var titleEl = document.getElementById("photos-album-title");
+
+      // 按 URL 上的 group 参数决定显示哪个相册
+      //（不依赖服务端 group 变量，避免页面缓存 / 插件版本差异导致打不开相册）
+      var group = "";
+      try {
+        group = new URLSearchParams(window.location.search).get("group") || "";
+      } catch (e) {
+        group = "";
+      }
+
+      var items = grid.querySelectorAll(".albums-item");
+      var opened = false;
+
+      Array.prototype.forEach.call(items, function (item) {
+        var masonry = item.querySelector(".photos-masonry");
+        var isMatch = group !== "" && item.getAttribute("data-album") === group;
+        if (isMatch) {
+          item.classList.add("is-active");
+          if (masonry) masonry.removeAttribute("hidden");
+          if (titleEl) titleEl.textContent = item.getAttribute("data-title") || "";
+          opened = true;
+        } else {
+          item.classList.remove("is-active");
+          if (masonry) masonry.setAttribute("hidden", "");
+        }
+      });
+
+      if (opened) {
+        grid.classList.add("is-album-open");
+        if (toolbar) toolbar.removeAttribute("hidden");
+      } else {
+        grid.classList.remove("is-album-open");
+        if (toolbar) toolbar.setAttribute("hidden", "");
+      }
+
+      // 预览模式（作用于全部相册瀑布流）
       var btn = document.getElementById("photos-preview-toggle");
-      var masonry = document.querySelector(".photos-masonry");
-      if (!btn || !masonry) return;
+      if (!btn) return;
 
       var KEY = "whitespace-photo-preview";
       var defaultOn = btn.getAttribute("data-default") === "on";
+      var globalOn = btn.getAttribute("data-global") === "1";
       var stored = null;
       try {
         stored = localStorage.getItem(KEY);
@@ -383,11 +349,14 @@
       var mode = stored === null ? defaultOn : stored === "on";
 
       function apply() {
-        if (mode) {
-          masonry.setAttribute("data-lightbox", "true");
-        } else {
-          masonry.removeAttribute("data-lightbox");
-        }
+        var all = document.querySelectorAll(".photos-masonry");
+        Array.prototype.forEach.call(all, function (m) {
+          if (globalOn && mode) {
+            m.setAttribute("data-lightbox", "true");
+          } else {
+            m.removeAttribute("data-lightbox");
+          }
+        });
         btn.textContent = mode ? "预览模式：开" : "预览模式：关";
         btn.setAttribute("aria-pressed", mode ? "true" : "false");
       }
@@ -399,7 +368,7 @@
         } catch (e) {
           /* ignore */
         }
-        // 重新加载以按新模式初始化灯箱
+        // 重新加载，使灯箱按新模式初始化
         window.location.reload();
       });
 

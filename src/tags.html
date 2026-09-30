@@ -19,7 +19,7 @@
         th:href="@{${tag.status.permalink}}"
         class="tag"
         th:text="${tag.spec.displayName}"
-        th:title="${tag.postCount != null ? tag.postCount + ' ' + #{'tag.count'} : ''}"
+        th:title="|${tag.postCount} #{tag.count}|"
       ></a>
     </div>
 

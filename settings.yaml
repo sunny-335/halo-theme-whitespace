@@ -170,12 +170,21 @@ spec:
           name: album_covers
           label: 相册封面
           value: []
-          help: 为相册手动指定封面；不配置时自动使用相册内第一张图片。「相册名称」填写图库页面显示的相册名
+          help: 为相册手动指定封面；不配置时自动使用相册内第一张图片。「相册」直接从图库插件已存在的分组中选择
           children:
-            - $formkit: text
+            - $formkit: select
               name: group
-              label: 相册名称
+              label: 相册
               validation: required
+              clearable: true
+              searchable: true
+              action: /apis/console.api.photo.halo.run/v1alpha1/photogroups
+              requestOption:
+                method: GET
+                itemsField: ""
+                labelField: spec.displayName
+                valueField: metadata.name
+              help: 选项自动取自图库插件中已创建的相册分组（需安装并启用图库插件）
             - $formkit: attachment
               name: cover
               label: 封面图

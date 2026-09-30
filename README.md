@@ -3,7 +3,6 @@
 一个移植自 Typecho 主题 [whitespace 留白](https://kehua.me) 的 [Halo](https://www.halo.run/) 主题，主打极简留白风格与清晰的排版，并为多款常用插件提供开箱即用的适配页面。
 
 > 本项目由 AI 开发完成，人工仅进行部分功能测试及问题找寻。
-> 源码仓库：<https://git.nxxy335.top/nxxy335/halo-theme-whitespace>
 
 ## 环境要求
 
@@ -21,30 +20,30 @@
 
 ## 已适配插件
 
-| 插件名称 | 插件标识 | 适配页面路由 | 说明 |
-| --- | --- | --- | --- |
-| [瞬间](https://github.com/halo-sigs/plugin-moments) | `plugin-moments` | `/moments` | 瞬间动态列表页，含 `/moments/{name}` 详情页（完整内容、媒体、标签、作者信息、评论区） |
-| [图库](https://github.com/halo-sigs/plugin-photos) | `plugin-photos` | `/photos` | 图片展示页面，按相册分组、封面自动选取、瀑布流 + 预览模式 |
-| [重要日子](https://github.com/yyliucha/plugin-important-dates) | `plugin-important-dates` | `/important-dates` | 即将到来提醒、全部日期倒计时、重要标记、人员生日 |
-| [友情链接](https://github.com/halo-sigs/plugin-links) | `plugin-links` | `/links` | 友链展示页，按分组显示标题、卡片统一高度；内嵌申请表单 |
-| [链接订阅](https://github.com/halo-sigs/plugin-links) | `plugin-links` | `/subscriptions` | RSS 订阅动态聚合，作者链接来源博客、摘要折叠 5 行 |
-| [豆瓣](https://github.com/chengzhongxue/plugin-douban) | `plugin-douban` | `/douban` | 豆瓣记录页，按「读过 / 在读 / 看过 / 在追」分栏展示书影音 |
-| [微信读书](https://github.com/yeora26/halo-weread-plugin) | `halo-weread-plugin` | 自定义页面 | 微信读书书架展示，访客免登录查看 |
-| [API 扩展包](https://github.com/HowieHz/halo-plugin-extra-api) | `extra-api` | 全站 | 服务端字数统计、代码高亮、全站/单条字数展示 |
+| 插件名称                                                        | 插件标识                     | 适配页面路由             | 说明                                                   |
+| ----------------------------------------------------------- | ------------------------ | ------------------ | ---------------------------------------------------- |
+| [瞬间](https://github.com/halo-sigs/plugin-moments)           | `plugin-moments`         | `/moments`         | 瞬间动态列表页，含 `/moments/{name}` 详情页（完整内容、媒体、标签、作者信息、评论区） |
+| [图库](https://github.com/halo-sigs/plugin-photos)            | `plugin-photos`          | `/photos`          | 图片展示页面，按相册分组、封面自动选取、瀑布流 + 预览模式                       |
+| [重要日子](https://github.com/yyliucha/plugin-important-dates)  | `plugin-important-dates` | `/important-dates` | 即将到来提醒、全部日期倒计时、重要标记、人员生日                             |
+| [友情链接](https://github.com/halo-sigs/plugin-links)           | `plugin-links`           | `/links`           | 友链展示页，按分组显示标题、卡片统一高度；内嵌申请表单                          |
+| [链接订阅](https://github.com/halo-sigs/plugin-links)           | `plugin-links`           | `/subscriptions`   | RSS 订阅动态聚合，作者链接来源博客、摘要折叠 5 行                         |
+| [豆瓣](https://github.com/chengzhongxue/plugin-douban)        | `plugin-douban`          | `/douban`          | 豆瓣记录页，按「读过 / 在读 / 看过 / 在追」分栏展示书影音                    |
+| [微信读书](https://github.com/yeora26/halo-weread-plugin)       | `halo-weread-plugin`     | 自定义页面              | 微信读书书架展示，访客免登录查看                                     |
+| [API 扩展包](https://github.com/HowieHz/halo-plugin-extra-api) | `extra-api`              | 全站                 | 服务端字数统计、代码高亮、全站/单条字数展示                               |
 
-> **注意**：插件需单独安装，安装后主题自动适配对应页面。若未安装某插件，对应页面或功能自动隐藏 / 降级，不会报错。
+> **注意**：插件需单独安装，安装后主题自动适配对应页面。若未安装某插件，对应页面或功能自动隐藏 / 降级，不会报错。  
 > 豆瓣插件建议 **v1.2.6+**（SQLite 数据结构）。
 
 ## 自定义页面模板
 
 在 Halo 后台「页面 → 新建 → 自定义模板」中选择使用：
 
-| 模板名 | 模板文件 | 说明 |
-| --- | --- | --- |
-| 关于 | `page_about.html` | 关于页，头像 / 简介 / 社交链接可配置 |
-| 留言板 | `page_guestbook.html` | 以评论区作为留言板的单页 |
-| 微信读书 | `weread.html` | 微信读书书架展示，依赖微信读书插件 |
-| 豆瓣页面 | `douban.html` | 豆瓣记录页，依赖豆瓣插件 |
+| 模板名  | 模板文件                  | 说明                    |
+| ---- | --------------------- | --------------------- |
+| 关于   | `page_about.html`     | 关于页，头像 / 简介 / 社交链接可配置 |
+| 留言板  | `page_guestbook.html` | 以评论区作为留言板的单页          |
+| 微信读书 | `weread.html`         | 微信读书书架展示，依赖微信读书插件     |
+| 豆瓣页面 | `douban.html`         | 豆瓣记录页，依赖豆瓣插件          |
 
 ## 主要功能
 
@@ -71,8 +70,10 @@
 
 ### 图库
 
-- 首屏按相册分组展示，封面默认自动取相册内第一张图（分组无图时回退取首图），可在后台为每个相册手动配置封面
+- 首屏按相册网格展示，封面 4:3 自适应填满，默认自动取相册内第一张图（分组无图时回退取首图）
+- 后台可为每个相册手动指定封面：「相册」直接从图库插件**已存在的分组中下拉选择**，无需手输名称
 - 点击相册进入 `?group=photo-group-*` 瀑布流视图（一行三张、页面加宽）
+- 相册切换由前端按 URL 上的 `group` 参数完成，不依赖服务端变量，因此**不受页面静态缓存影响**
 - 预览模式：默认值可在设置中配置（默认开），访客可在前台自行切换（开 → 点击图片灯箱放大；关 → 点击进入图片详情）
 
 ### 瞬间
