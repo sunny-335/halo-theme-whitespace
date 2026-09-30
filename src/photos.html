@@ -52,6 +52,7 @@
         color: var(--color-primary);
       }
       :where(.albums-card__cover) {
+        display: block;
         position: relative;
         width: 100%;
         aspect-ratio: 4 / 3;
@@ -237,16 +238,14 @@
                       th:unless="${rawPhotos != null and !#lists.isEmpty(rawPhotos)}"
                     >
                       <th:block
-                        th:with="fbResult=${photoFinder.list(1, 1, album.metadata.name)}"
+                        th:with="fbPhotos=${photoFinder.listBy(album.metadata.name)}"
                       >
-                        <th:block th:with="fbPhotos=${fbResult.items}">
-                          <img
-                            th:if="${not #lists.isEmpty(fbPhotos)}"
-                            th:src="${fbPhotos[0].spec.cover != null and !#strings.isEmpty(fbPhotos[0].spec.cover) ? fbPhotos[0].spec.cover : fbPhotos[0].spec.url}"
-                            th:alt="${album.spec.displayName}"
-                            loading="lazy"
-                          />
-                        </th:block>
+                        <img
+                          th:if="${not #lists.isEmpty(fbPhotos)}"
+                          th:src="${fbPhotos[0].spec.cover != null and !#strings.isEmpty(fbPhotos[0].spec.cover) ? fbPhotos[0].spec.cover : fbPhotos[0].spec.url}"
+                          th:alt="${album.spec.displayName}"
+                          loading="lazy"
+                        />
                       </th:block>
                     </th:block>
                   </th:block>
@@ -288,54 +287,62 @@
 
       <!-- 相册内瀑布流视图 -->
       <th:block th:unless="${#strings.isEmpty(group)}">
-        <div class="photos-toolbar" th:if="${not #lists.isEmpty(photos.items)}">
-          <button
-            class="photos-preview-toggle"
-            id="photos-preview-toggle"
-            type="button"
-            th:attr="data-default=${theme.config?.photos?.preview_default != false ? 'on' : 'off'}"
+        <th:block
+          th:with="hasItems=${photos != null and photos.items != null and !#lists.isEmpty(photos.items)}"
+        >
+          <th:block
+            th:with="groupPhotos=${hasItems ? photos.items : photoFinder.listBy(group)}"
           >
-            预览模式
-          </button>
-        </div>
+            <div class="photos-toolbar" th:if="${not #lists.isEmpty(groupPhotos)}">
+              <button
+                class="photos-preview-toggle"
+                id="photos-preview-toggle"
+                type="button"
+                th:attr="data-default=${theme.config?.photos?.preview_default != false ? 'on' : 'off'}"
+              >
+                预览模式
+              </button>
+            </div>
 
-        <ul
-          class="photos-masonry"
-          th:if="${not #lists.isEmpty(photos.items)}"
-          th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
-        >
-          <li th:each="photo : ${photos.items}">
-            <a
-              class="photos-card__media"
-              th:href="${photoUrl.detail(photo)}"
-              th:title="${photo.spec.displayName}"
+            <ul
+              class="photos-masonry"
+              th:if="${not #lists.isEmpty(groupPhotos)}"
+              th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
             >
-              <img
-                th:src="${#strings.isEmpty(photo.spec.cover) ? photo.spec.url : photo.spec.cover}"
-                th:alt="${photo.spec.displayName}"
-                loading="lazy"
-              />
-            </a>
+              <li th:each="photo : ${groupPhotos}">
+                <a
+                  class="photos-card__media"
+                  th:href="${photoUrl.detail(photo)}"
+                  th:title="${photo.spec.displayName}"
+                >
+                  <img
+                    th:src="${#strings.isEmpty(photo.spec.cover) ? photo.spec.url : photo.spec.cover}"
+                    th:alt="${photo.spec.displayName}"
+                    loading="lazy"
+                  />
+                </a>
+                <p
+                  class="photos-card__caption"
+                  th:if="${not #strings.isEmpty(photo.spec.displayName)}"
+                  th:text="${photo.spec.displayName}"
+                >
+                  照片
+                </p>
+              </li>
+            </ul>
             <p
-              class="photos-card__caption"
-              th:if="${not #strings.isEmpty(photo.spec.displayName)}"
-              th:text="${photo.spec.displayName}"
+              class="photos-empty"
+              th:if="${#lists.isEmpty(groupPhotos)}"
+              role="status"
             >
-              照片
+              暂无照片
             </p>
-          </li>
-        </ul>
-        <p
-          class="photos-empty"
-          th:if="${#lists.isEmpty(photos.items)}"
-          role="status"
-        >
-          暂无照片
-        </p>
+          </th:block>
+        </th:block>
 
         <nav
           class="photos-pagination"
-          th:if="${photos.hasPrevious() || photos.hasNext()}"
+          th:if="${photos != null and (photos.hasPrevious() or photos.hasNext())}"
           aria-label="分页"
         >
           <a
