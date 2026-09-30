@@ -29,13 +29,15 @@
         align-items: center;
         gap: 0.75rem;
         margin-bottom: 0.75rem;
-        opacity: 0.75;
-        color: var(--color-text-secondary);
       }
       .moments article header > a {
         display: inline-flex;
         align-items: center;
         line-height: 2rem;
+        color: var(--color-text-secondary);
+      }
+      .moments article header > a:hover {
+        color: var(--color-link-hover);
       }
       .moments .moment-owner {
         display: inline-flex;
@@ -43,10 +45,14 @@
         gap: 0.5rem;
       }
       .moments .moment-owner img {
-        width: 2rem;
-        height: 2rem;
+        width: 2.25rem;
+        height: 2.25rem;
         border-radius: 50%;
         object-fit: cover;
+      }
+      .moments .moment-owner .moment-owner-name {
+        color: var(--color-text);
+        font-weight: 600;
       }
       .moments .moment-tags {
         display: flex;
@@ -58,17 +64,39 @@
       .moments .moment-tags a {
         color: var(--color-link);
       }
-      .moments .moment-media img,
+      /* 图片排版：仿微信朋友圈（多图九宫格方图，单图放大保持原比例） */
+      .moments .moment-media {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.3rem;
+        margin-top: 0.75rem;
+      }
+      .moments .moment-media img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+        background: var(--color-bg-secondary);
+      }
+      .moments .moment-media > :only-child {
+        grid-column: auto;
+      }
+      .moments .moment-media img:only-child {
+        aspect-ratio: auto;
+        width: auto;
+        max-width: min(100%, 22rem);
+        max-height: 26rem;
+      }
       .moments .moment-media video {
+        grid-column: 1 / -1;
         display: block;
         max-width: 100%;
-        height: auto;
-        margin-top: 1rem;
         border-radius: var(--radius-md);
       }
       .moments .moment-media audio {
+        grid-column: 1 / -1;
         width: 100%;
-        margin-top: 1rem;
       }
     </style>
   </template>

@@ -79,8 +79,9 @@
       ></p>
 
       <th:block th:if="${pluginFinder.available('plugin-douban')}">
+        <!-- 读过 -->
         <th:block
-          th:with="movies=${doubanFinder.getMovies(24, 0, 'book', 'done')}"
+          th:with="res=${doubanFinder.list(1, 24, 'book', 'done')}, movies=${res != null ? res.items : null}"
         >
           <div
             class="douban-section"
@@ -91,27 +92,28 @@
               <a
                 th:each="m : ${movies}"
                 class="douban-card"
-                th:href="${m.spec.link}"
+                th:href="${m.link}"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <img
                   class="douban-cover"
-                  th:src="${m.spec.poster}"
-                  th:alt="${m.spec.name}"
+                  th:src="${m.poster}"
+                  th:alt="${m.name}"
                   loading="lazy"
+                  decoding="async"
                 />
-                <p class="douban-name" th:text="${m.spec.name}">名称</p>
+                <p class="douban-name" th:text="${m.name}">名称</p>
                 <p class="douban-meta">
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.year)}"
-                    th:text="${m.spec.year}"
+                    th:if="${not #strings.isEmpty(m.year)}"
+                    th:text="${m.year}"
                     >年份</span
                   >
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.douban_score)}"
+                    th:if="${not #strings.isEmpty(m.score)}"
                     class="douban-score"
-                    th:text="'★ ' + ${m.spec.douban_score}"
+                    th:text="'★ ' + ${m.score}"
                     >评分</span
                   >
                 </p>
@@ -119,8 +121,10 @@
             </div>
           </div>
         </th:block>
+
+        <!-- 在读 -->
         <th:block
-          th:with="movies=${doubanFinder.getMovies(24, 0, 'book', 'doing')}"
+          th:with="res=${doubanFinder.list(1, 24, 'book', 'doing')}, movies=${res != null ? res.items : null}"
         >
           <div
             class="douban-section"
@@ -131,27 +135,28 @@
               <a
                 th:each="m : ${movies}"
                 class="douban-card"
-                th:href="${m.spec.link}"
+                th:href="${m.link}"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <img
                   class="douban-cover"
-                  th:src="${m.spec.poster}"
-                  th:alt="${m.spec.name}"
+                  th:src="${m.poster}"
+                  th:alt="${m.name}"
                   loading="lazy"
+                  decoding="async"
                 />
-                <p class="douban-name" th:text="${m.spec.name}">名称</p>
+                <p class="douban-name" th:text="${m.name}">名称</p>
                 <p class="douban-meta">
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.year)}"
-                    th:text="${m.spec.year}"
+                    th:if="${not #strings.isEmpty(m.year)}"
+                    th:text="${m.year}"
                     >年份</span
                   >
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.douban_score)}"
+                    th:if="${not #strings.isEmpty(m.score)}"
                     class="douban-score"
-                    th:text="'★ ' + ${m.spec.douban_score}"
+                    th:text="'★ ' + ${m.score}"
                     >评分</span
                   >
                 </p>
@@ -159,8 +164,10 @@
             </div>
           </div>
         </th:block>
+
+        <!-- 看过 -->
         <th:block
-          th:with="movies=${doubanFinder.getMovies(24, 0, 'movie', 'done')}"
+          th:with="res=${doubanFinder.list(1, 24, 'movie', 'done')}, movies=${res != null ? res.items : null}"
         >
           <div
             class="douban-section"
@@ -171,27 +178,28 @@
               <a
                 th:each="m : ${movies}"
                 class="douban-card"
-                th:href="${m.spec.link}"
+                th:href="${m.link}"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <img
                   class="douban-cover"
-                  th:src="${m.spec.poster}"
-                  th:alt="${m.spec.name}"
+                  th:src="${m.poster}"
+                  th:alt="${m.name}"
                   loading="lazy"
+                  decoding="async"
                 />
-                <p class="douban-name" th:text="${m.spec.name}">名称</p>
+                <p class="douban-name" th:text="${m.name}">名称</p>
                 <p class="douban-meta">
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.year)}"
-                    th:text="${m.spec.year}"
+                    th:if="${not #strings.isEmpty(m.year)}"
+                    th:text="${m.year}"
                     >年份</span
                   >
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.douban_score)}"
+                    th:if="${not #strings.isEmpty(m.score)}"
                     class="douban-score"
-                    th:text="'★ ' + ${m.spec.douban_score}"
+                    th:text="'★ ' + ${m.score}"
                     >评分</span
                   >
                 </p>
@@ -199,8 +207,10 @@
             </div>
           </div>
         </th:block>
+
+        <!-- 在追 -->
         <th:block
-          th:with="movies=${doubanFinder.getMovies(24, 0, 'drama', 'doing')}"
+          th:with="res=${doubanFinder.list(1, 24, 'drama', 'doing')}, movies=${res != null ? res.items : null}"
         >
           <div
             class="douban-section"
@@ -211,27 +221,28 @@
               <a
                 th:each="m : ${movies}"
                 class="douban-card"
-                th:href="${m.spec.link}"
+                th:href="${m.link}"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <img
                   class="douban-cover"
-                  th:src="${m.spec.poster}"
-                  th:alt="${m.spec.name}"
+                  th:src="${m.poster}"
+                  th:alt="${m.name}"
                   loading="lazy"
+                  decoding="async"
                 />
-                <p class="douban-name" th:text="${m.spec.name}">名称</p>
+                <p class="douban-name" th:text="${m.name}">名称</p>
                 <p class="douban-meta">
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.year)}"
-                    th:text="${m.spec.year}"
+                    th:if="${not #strings.isEmpty(m.year)}"
+                    th:text="${m.year}"
                     >年份</span
                   >
                   <span
-                    th:if="${not #strings.isEmpty(m.spec.douban_score)}"
+                    th:if="${not #strings.isEmpty(m.score)}"
                     class="douban-score"
-                    th:text="'★ ' + ${m.spec.douban_score}"
+                    th:text="'★ ' + ${m.score}"
                     >评分</span
                   >
                 </p>

@@ -40,7 +40,6 @@
 
 | 模板名  | 模板文件                  | 说明                    |
 | ---- | --------------------- | --------------------- |
-| 关于   | `page_about.html`     | 关于页，头像 / 简介 / 社交链接可配置 |
 | 留言板  | `page_guestbook.html` | 以评论区作为留言板的单页          |
 | 微信读书 | `weread.html`         | 微信读书书架展示，依赖微信读书插件     |
 | 豆瓣页面 | `douban.html`         | 豆瓣记录页，依赖豆瓣插件          |
@@ -129,7 +128,7 @@ pnpm check
 │   ├── error/           # 404 与通用错误页
 │   ├── css/main.css     # 全部样式（双主题变量、响应式、正文排版）
 │   ├── js/              # main.ts 全站脚本 / post.ts 文章脚本 / lightbox.ts 灯箱
-│   ├── index.html post.html page.html page_about.html
+│   ├── index.html post.html page.html
 │   ├── archives.html category.html tag.html categories.html tags.html author.html
 │   ├── moments.html moment.html photos.html important-dates.html
 │   ├── weread.html douban.html links.html links-subscribe.html page_guestbook.html

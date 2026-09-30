@@ -60,34 +60,6 @@ spec:
           label: 首页展示置顶文章
           value: true
           help: 在首页顶部以大标题样式展示最新的一篇置顶文章（需在文章设置中开启置顶）
-    - group: about
-      label: 关于页面
-      formSchema:
-        - $formkit: attachment
-          name: avatar
-          label: 博主头像
-          value: ""
-          help: 关于页面展示的头像，留空则使用站点 Logo
-        - $formkit: textarea
-          name: bio
-          label: 个人简介
-          value: "一个热爱生活、热爱技术的普通人"
-          help: 关于页面头像下方显示的简介
-        - $formkit: text
-          name: github_url
-          label: GitHub 链接
-          value: ""
-          placeholder: https://github.com/yourname
-        - $formkit: text
-          name: twitter_url
-          label: Twitter 链接
-          value: ""
-          placeholder: https://x.com/yourname
-        - $formkit: text
-          name: contact_email
-          label: 联系邮箱
-          value: ""
-          placeholder: mail@example.com
     - group: seo
       label: SEO
       formSchema:
@@ -158,34 +130,3 @@ spec:
           name: show_words
           label: 全站总字数（需 extra-api 插件）
           value: true
-    - group: photos
-      label: 图库
-      formSchema:
-        - $formkit: checkbox
-          name: preview_default
-          label: 相册默认开启预览模式
-          value: true
-          help: 进入相册瀑布流时默认开启点击放大预览，访客可在前台自行切换
-        - $formkit: repeater
-          name: album_covers
-          label: 相册封面
-          value: []
-          help: 为相册手动指定封面；不配置时自动使用相册内第一张图片。「相册」直接从图库插件已存在的分组中选择
-          children:
-            - $formkit: select
-              name: group
-              label: 相册
-              validation: required
-              clearable: true
-              searchable: true
-              action: /apis/console.api.photo.halo.run/v1alpha1/photogroups
-              requestOption:
-                method: GET
-                itemsField: ""
-                labelField: spec.displayName
-                valueField: metadata.name
-              help: 选项自动取自图库插件中已创建的相册分组（需安装并启用图库插件）
-            - $formkit: attachment
-              name: cover
-              label: 封面图
-              validation: required
