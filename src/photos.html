@@ -80,6 +80,19 @@
         font-size: 0.85rem;
         color: var(--color-text-muted);
       }
+      :where(.albums-card__more) {
+        display: inline-block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--color-primary);
+        opacity: 0;
+        transform: translateX(-0.25rem);
+        transition: opacity var(--transition-fast), transform var(--transition-fast);
+      }
+      :where(.albums-card:hover .albums-card__more) {
+        opacity: 1;
+        transform: translateX(0);
+      }
 
       /* 瀑布流（一行三张） */
       :where(.photos-masonry) {
@@ -209,14 +222,34 @@
               <a
                 class="albums-card"
                 th:href="${photoUrl.list(album.metadata.name)}"
+                th:aria-label="|查看相册 ${album.spec.displayName}|"
+                th:title="|查看相册 ${album.spec.displayName}|"
               >
                 <span class="albums-card__cover">
-                  <img
-                    th:if="${not #lists.isEmpty(album.photos)}"
-                    th:src="${album.photos[0].spec.cover != null and !#strings.isEmpty(album.photos[0].spec.cover) ? album.photos[0].spec.cover : album.photos[0].spec.url}"
-                    th:alt="${album.spec.displayName}"
-                    loading="lazy"
-                  />
+                  <th:block th:with="rawPhotos=${album.photos}">
+                    <img
+                      th:if="${rawPhotos != null and !#lists.isEmpty(rawPhotos)}"
+                      th:src="${rawPhotos[0].spec.cover != null and !#strings.isEmpty(rawPhotos[0].spec.cover) ? rawPhotos[0].spec.cover : rawPhotos[0].spec.url}"
+                      th:alt="${album.spec.displayName}"
+                      loading="lazy"
+                    />
+                    <th:block
+                      th:unless="${rawPhotos != null and !#lists.isEmpty(rawPhotos)}"
+                    >
+                      <th:block
+                        th:with="fbResult=${photoFinder.list(1, 1, album.metadata.name)}"
+                      >
+                        <th:block th:with="fbPhotos=${fbResult.items}">
+                          <img
+                            th:if="${not #lists.isEmpty(fbPhotos)}"
+                            th:src="${fbPhotos[0].spec.cover != null and !#strings.isEmpty(fbPhotos[0].spec.cover) ? fbPhotos[0].spec.cover : fbPhotos[0].spec.url}"
+                            th:alt="${album.spec.displayName}"
+                            loading="lazy"
+                          />
+                        </th:block>
+                      </th:block>
+                    </th:block>
+                  </th:block>
                   <th:block
                     th:if="${not #lists.isEmpty(theme.config?.photos?.album_covers)}"
                   >
@@ -243,6 +276,7 @@
                 >
                   12 张照片
                 </p>
+                <span class="albums-card__more">查看相册 →</span>
               </a>
             </li>
           </ul>
