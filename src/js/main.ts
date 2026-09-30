@@ -253,6 +253,20 @@ function initKeyboardShortcuts(): void {
 }
 
 // ========================================
+// lightgallery 灯箱（按需加载）
+// ========================================
+
+async function initLightbox(): Promise<void> {
+  if (!document.querySelector("[data-lightbox]")) return;
+  try {
+    const { initLightbox } = await import("./lightbox");
+    initLightbox();
+  } catch {
+    /* 加载失败时静默降级为普通图片展示 */
+  }
+}
+
+// ========================================
 // 初始化
 // ========================================
 
@@ -270,6 +284,7 @@ function init(): void {
   initSmoothScroll();
   initExternalLinks();
   initKeyboardShortcuts();
+  void initLightbox();
 }
 
 if (document.readyState === "loading") {

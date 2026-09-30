@@ -1,0 +1,237 @@
+<include src="partials/layout.html">
+  <template name="head">
+    <title th:text="|${title} - ${site.title}|">记得</title>
+    <style>
+      .dates-intro {
+        color: var(--color-text-secondary);
+        margin-bottom: 1.5rem;
+      }
+      .dates-section {
+        margin: 2rem 0;
+      }
+      .dates-section-title {
+        font-size: 1.15rem;
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .dates-reminders {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+        gap: 1rem;
+      }
+      .dates-reminder {
+        padding: 1rem 1.25rem;
+        border: 1px solid var(--color-border);
+        border-left: 3px solid var(--color-primary);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-secondary);
+      }
+      .dates-reminder-name {
+        margin: 0;
+        font-weight: 600;
+      }
+      .dates-reminder-text {
+        margin: 0.35rem 0 0;
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+      }
+      .dates-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .dates-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem 0.75rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .dates-item-name {
+        font-weight: 600;
+      }
+      .dates-item-date {
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+      }
+      .dates-badge {
+        margin-left: auto;
+        padding: 0.15rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-secondary);
+        white-space: nowrap;
+      }
+      .dates-badge.soon {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+      }
+      .dates-badge.today {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-bg);
+      }
+      .dates-badge.important {
+        border-color: #e5a50a;
+        color: #e5a50a;
+      }
+      .dates-persons {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+      .people-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
+        gap: 1rem;
+      }
+      .people-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-secondary);
+      }
+      .people-item img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .people-name {
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      .people-meta {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+      .dates-empty {
+        color: var(--color-text-muted);
+        padding: 1rem 0;
+      }
+    </style>
+  </template>
+
+  <div class="container">
+    <section class="important-dates">
+      <h1 th:text="${title}">记得</h1>
+      <p class="dates-intro">重要的日子，值得被记住。</p>
+
+      <!-- 即将到来的提醒 -->
+      <th:block th:if="${not #lists.isEmpty(reminders)}">
+        <div class="dates-section">
+          <h2 class="dates-section-title">即将到来</h2>
+          <div class="dates-reminders">
+            <div class="dates-reminder" th:each="r : ${reminders}">
+              <p class="dates-reminder-name" th:text="${r.title}">名称</p>
+              <p class="dates-reminder-text">
+                <span
+                  th:if="${not #strings.isEmpty(r.dateText)}"
+                  th:text="${r.dateText}"
+                ></span>
+                <span
+                  th:if="${not #strings.isEmpty(r.stageText)}"
+                  th:text="${r.stageText}"
+                ></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </th:block>
+
+      <!-- 全部日期 -->
+      <div class="dates-section">
+        <h2 class="dates-section-title">全部日期</h2>
+        <ul class="dates-list" th:if="${not #lists.isEmpty(dates)}">
+          <li class="dates-item" th:each="d : ${dates}">
+            <span class="dates-item-name" th:text="${d.title}">名称</span>
+            <span
+              class="dates-badge important"
+              th:if="${showImportantTag and d.important}"
+              >重要</span
+            >
+            <span
+              class="dates-item-date"
+              th:if="${not #strings.isEmpty(d.dateText)}"
+              th:text="${d.dateText}"
+            ></span>
+            <span
+              class="dates-item-date"
+              th:if="${d.daysValid and not #strings.isEmpty(d.nextSolarDate)}"
+              th:text="${d.nextSolarDate}"
+            ></span>
+            <span
+              class="dates-persons"
+              th:if="${not #lists.isEmpty(d.personNames)}"
+            >
+              <span th:each="pn : ${d.personNames}" th:text="'@' + ${pn}"></span>
+            </span>
+            <span
+              class="dates-badge today"
+              th:if="${d.daysValid and d.daysUntil == 0}"
+              >今天</span
+            >
+            <span
+              class="dates-badge soon"
+              th:if="${d.daysValid and d.daysUntil > 0}"
+              th:text="|还有 ${d.daysUntil} 天|"
+              >还有 N 天</span
+            >
+          </li>
+        </ul>
+        <p class="dates-empty" th:if="${#lists.isEmpty(dates)}">暂无重要日期</p>
+      </div>
+
+      <!-- 人员与生日 -->
+      <th:block th:if="${not #lists.isEmpty(people)}">
+        <div class="dates-section">
+          <h2 class="dates-section-title">人员</h2>
+          <ul class="people-list">
+            <li class="people-item" th:each="p : ${people}">
+              <img
+                th:if="${showAvatar and not #strings.isEmpty(p.avatar)}"
+                th:src="${p.avatar}"
+                th:alt="${p.displayName}"
+                loading="lazy"
+              />
+              <span>
+                <span class="people-name" th:text="${p.displayName}">姓名</span>
+                <p class="people-meta">
+                  <span
+                    th:if="${not #strings.isEmpty(p.relation)}"
+                    th:text="${p.relation}"
+                  ></span>
+                  <span
+                    th:if="${not #strings.isEmpty(p.nextSolarDate) and p.daysUntil == 0}"
+                    th:text="'生日 · 今天'"
+                  ></span>
+                  <span
+                    th:if="${not #strings.isEmpty(p.nextSolarDate) and p.daysUntil > 0}"
+                    th:text="|生日还有 ${p.daysUntil} 天|"
+                  ></span>
+                  <span
+                    th:if="${not #strings.isEmpty(p.nextSolarDate)}"
+                    th:text="${p.nextSolarDate}"
+                  ></span>
+                </p>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </th:block>
+    </section>
+  </div>
+</include>

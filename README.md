@@ -18,6 +18,7 @@
 - **页脚可关闭的主题署名**：默认「Theme by WhiteSpace」并链接到主题仓库，可在设置中修改名称 / 链接或整体关闭
 - **页脚全站数据统计**：文章 / 分类 / 标签 / 评论 / 访问量 / 字数，可按项开关，整体可关闭
 - **文章卡片字数 + 阅读时长**：可在设置中关闭（需 `halo-plugin-extra-api` 提供数据）
+- **全站 lightgallery.js 灯箱**：文章、页面、瞬间、图库等页面的图片点击放大预览（按需懒加载，可在设置中整体关闭）
 - 多语言：`i18n/default.properties`（回退）+ `i18n/zh_CN.properties`
 - 提供 `layout.html` 布局契约，供使用布局契约的插件页面复用主题导航 / 页脚 / 暗色样式
 
@@ -25,9 +26,10 @@
 
 主题已为以下插件提供适配页面（在 `src/` 下以同名模板提供，构建后进入 `templates/`）：
 
-- **plugin-moments**：`/moments` 瞬间页
-- **plugin-photos**：`/photos` 图库页
-- **plugin-links**：`/links` 友链页；友链申请表单已**直接内嵌**在友链页底部（点击「申请友链」展开，调用插件公共 REST API，含图形验证码）；并额外提供
+- **plugin-moments**：`/moments` 瞬间列表页 + `/moments/{name}` 瞬间详情页（完整内容、媒体、标签、作者信息与评论区）；列表页发布人与发布时间同行对齐
+- **plugin-photos**：`/photos` 图库页 —— 首屏按相册分组展示（封面默认自动取相册内第一张图，可在主题设置「图库」中为每个相册手动配置封面）；点击相册进入 `?group=photo-group-*` 瀑布流视图（一行三张、页面加宽），支持**预览模式**（lightgallery 点击放大，默认值可在设置中配置，访客可在前台自行切换）
+- **plugin-important-dates**：`/important-dates` 重要日子页（即将到来提醒、全部日期倒计时、重要标记、人员生日）
+- **plugin-links**：`/links` 友链页 —— 「全部」视图按分组展示并显示分组标题，卡片简介最多两行、卡片高度统一；友链申请表单已**直接内嵌**在友链页底部（点击「申请友链」展开，调用插件公共 REST API，含图形验证码）；并额外提供
   - `links-subscribe.html`：RSS 订阅动态聚合页（使用 `linkFeedFinder`）；每条仅显示作者与发布时间，作者名链接到来源博客，摘要默认折叠为 5 行
 - **halo-weread-plugin**：`weread.html` 微信读书书架页（前端拉取插件 `/shelf-html` 并注入）
 - **plugin-douban**：`douban.html` 豆瓣收藏页（按「读过 / 在读 / 看过 / 在追」分栏展示书影音，使用 `doubanFinder.getMovies(...)`；未安装插件时显示提示）。在控制台新建单页并选择「豆瓣页面」模板即可启用
@@ -88,8 +90,10 @@ pnpm check          # 格式化 + Lint 修复
 | basic   | color_scheme       | 默认配色：跟随系统 / 浅色 / 深色             |
 | basic   | footer_copyright   | 页脚自定义版权（支持 HTML，留空不显示）     |
 | basic   | show_theme_credit  | 页脚是否显示「Theme by」署名（默认开）       |
-| basic   | theme_credit_text  | 署名名称（默认「暖心向阳335」）              |
+| basic   | theme_credit_text  | 署名名称（默认「WhiteSpace」，可改）         |
+| basic   | theme_credit_url   | 署名跳转链接（默认主题仓库地址）             |
 | basic   | show_word_count    | 文章卡片是否显示字数与阅读时长（需 extra-api）|
+| basic   | enable_lightbox    | 全站 lightgallery 图片灯箱（默认开）         |
 | featured| enable             | 首页是否展示置顶文章                         |
 | about   | avatar / bio / github_url / twitter_url / contact_email | 关于页（自定义模板 `page_about.html`）内容 |
 | seo     | enable_metadata    | 输出 canonical / Open Graph / Twitter Card  |
@@ -99,6 +103,8 @@ pnpm check          # 格式化 + Lint 修复
 | stats   | enable             | 页脚是否显示全站数据统计（默认关）            |
 | stats   | show_posts / show_categories / show_tags / show_comments / show_visits | 各项统计的显隐开关 |
 | stats   | show_words         | 全站总字数（需 extra-api 插件，默认开）       |
+| photos  | preview_default    | 相册瀑布流是否默认开启预览模式（默认开）      |
+| photos  | album_covers       | 各相册手动封面（「相册名称 + 封面图」列表，留空自动取第一张） |
 
 ## 约定与说明
 

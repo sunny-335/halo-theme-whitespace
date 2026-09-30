@@ -26,10 +26,16 @@
       .moments article header {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
         gap: 0.75rem;
         margin-bottom: 0.75rem;
         opacity: 0.75;
         color: var(--color-text-secondary);
+      }
+      .moments article header > a {
+        display: inline-flex;
+        align-items: center;
+        line-height: 2rem;
       }
       .moments .moment-owner {
         display: inline-flex;
@@ -41,6 +47,16 @@
         height: 2rem;
         border-radius: 50%;
         object-fit: cover;
+      }
+      .moments .moment-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+      }
+      .moments .moment-tags a {
+        color: var(--color-link);
       }
       .moments .moment-media img,
       .moments .moment-media video {
@@ -103,12 +119,25 @@
             </header>
 
             <div
+              class="moment-tags"
+              th:if="${not #lists.isEmpty(moment.spec.tags)}"
+            >
+              <a
+                th:each="tag : ${moment.spec.tags}"
+                th:href="@{/moments(tag=${tag})}"
+                th:text="'#' + ${tag}"
+              ></a>
+            </div>
+
+            <div
               th:if="${not #strings.isEmpty(content.html)}"
+              th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
               th:utext="${content.html}"
             ></div>
 
             <div
               class="moment-media"
+              th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
               th:if="${not #lists.isEmpty(content.medium)}"
             >
               <th:block th:each="medium : ${content.medium}">

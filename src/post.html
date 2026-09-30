@@ -67,7 +67,11 @@
         <img th:src="${post.spec.cover}" th:alt="${post.spec.title}" />
       </div>
 
-      <div class="article-content" th:utext="${post.content.content}"></div>
+      <div
+        class="article-content"
+        th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
+        th:utext="${post.content.content}"
+      ></div>
 
       <!-- 文章标签 -->
       <div class="article-tags" th:if="${not #lists.isEmpty(post.tags)}">

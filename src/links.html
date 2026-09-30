@@ -26,12 +26,15 @@
       }
       .links-list li {
         margin: 0;
+        display: flex;
       }
       .links-list a {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 0.75rem;
         padding: 1rem;
+        width: 100%;
+        box-sizing: border-box;
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
         background: var(--color-bg-secondary);
@@ -48,6 +51,11 @@
         object-fit: cover;
         flex-shrink: 0;
       }
+      .links-list .links-body {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
       .links-list .links-name {
         font-weight: 600;
       }
@@ -55,6 +63,19 @@
         margin: 0.25rem 0 0;
         font-size: 0.85rem;
         color: var(--color-text-secondary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .links-group-title {
+        font-size: 1.1rem;
+        margin: 2rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .links-section:first-of-type .links-group-title {
+        margin-top: 0;
       }
       .links-apply {
         margin-top: 2rem;
@@ -138,29 +159,103 @@
         ></a>
       </nav>
 
-      <ul th:if="${not #lists.isEmpty(links)}" class="links-list">
-        <li th:each="link : ${links}">
-          <a th:href="@{${link.spec.url}}" target="_blank" rel="noopener noreferrer">
-            <img
-              th:if="${not #strings.isEmpty(link.spec.logo)}"
-              th:src="@{${link.spec.logo}}"
-              alt=""
-              loading="lazy"
-            />
-            <span>
-              <span class="links-name" th:text="${link.spec.displayName}"
-                >链接名称</span
+      <th:block th:if="${group == null}">
+        <section class="links-section" th:each="grp : ${simpleGroups}">
+          <h2 class="links-group-title" th:text="${grp.spec.displayName}">
+            分组
+          </h2>
+          <ul class="links-list">
+            <li
+              th:each="link : ${links}"
+              th:if="${link.spec.groupName == grp.metadata.name}"
+            >
+              <a
+                th:href="@{${link.spec.url}}"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-              <p
-                class="links-desc"
-                th:if="${not #strings.isEmpty(link.spec.description)}"
-                th:text="${link.spec.description}"
-              ></p>
-            </span>
-          </a>
-        </li>
-      </ul>
-      <p th:unless="${not #lists.isEmpty(links)}">暂无链接</p>
+                <img
+                  th:if="${not #strings.isEmpty(link.spec.logo)}"
+                  th:src="@{${link.spec.logo}}"
+                  alt=""
+                  loading="lazy"
+                />
+                <span class="links-body">
+                  <span class="links-name" th:text="${link.spec.displayName}"
+                    >链接名称</span
+                  >
+                  <p
+                    class="links-desc"
+                    th:if="${not #strings.isEmpty(link.spec.description)}"
+                    th:text="${link.spec.description}"
+                  ></p>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section class="links-section">
+          <h2 class="links-group-title">未分组</h2>
+          <ul class="links-list">
+            <li
+              th:each="link : ${links}"
+              th:if="${#strings.isEmpty(link.spec.groupName)}"
+            >
+              <a
+                th:href="@{${link.spec.url}}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  th:if="${not #strings.isEmpty(link.spec.logo)}"
+                  th:src="@{${link.spec.logo}}"
+                  alt=""
+                  loading="lazy"
+                />
+                <span class="links-body">
+                  <span class="links-name" th:text="${link.spec.displayName}"
+                    >链接名称</span
+                  >
+                  <p
+                    class="links-desc"
+                    th:if="${not #strings.isEmpty(link.spec.description)}"
+                    th:text="${link.spec.description}"
+                  ></p>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </section>
+      </th:block>
+      <th:block th:unless="${group == null}">
+        <ul th:if="${not #lists.isEmpty(links)}" class="links-list">
+          <li th:each="link : ${links}">
+            <a
+              th:href="@{${link.spec.url}}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                th:if="${not #strings.isEmpty(link.spec.logo)}"
+                th:src="@{${link.spec.logo}}"
+                alt=""
+                loading="lazy"
+              />
+              <span class="links-body">
+                <span class="links-name" th:text="${link.spec.displayName}"
+                  >链接名称</span
+                >
+                <p
+                  class="links-desc"
+                  th:if="${not #strings.isEmpty(link.spec.description)}"
+                  th:text="${link.spec.description}"
+                ></p>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(links)}">暂无链接</p>
+      </th:block>
 
       <div class="links-apply">
         <button
@@ -221,6 +316,13 @@
 
   <script th:inline="none">
     (function () {
+      // 收起没有链接的分组区块
+      document.querySelectorAll(".links-section").forEach(function (sec) {
+        if (!sec.querySelector(".links-list li")) {
+          sec.remove();
+        }
+      });
+
       var API = "/apis/api.link.halo.run/v1alpha1/link-applications";
       var CAPTCHA = "/apis/api.link.halo.run/v1alpha1/link-applications/captcha";
       var toggle = document.getElementById("link-apply-toggle");

@@ -47,6 +47,11 @@ spec:
           label: 文章卡片显示字数
           value: true
           help: 在文章卡片与置顶文章上展示字数及阅读时长（需 extra-api 插件提供数据）
+        - $formkit: checkbox
+          name: enable_lightbox
+          label: 全站图片灯箱
+          value: true
+          help: 使用 lightgallery 为文章、瞬间、图库等页面的图片提供点击放大预览
     - group: featured
       label: 置顶文章
       formSchema:
@@ -153,3 +158,25 @@ spec:
           name: show_words
           label: 全站总字数（需 extra-api 插件）
           value: true
+    - group: photos
+      label: 图库
+      formSchema:
+        - $formkit: checkbox
+          name: preview_default
+          label: 相册默认开启预览模式
+          value: true
+          help: 进入相册瀑布流时默认开启点击放大预览，访客可在前台自行切换
+        - $formkit: repeater
+          name: album_covers
+          label: 相册封面
+          value: []
+          help: 为相册手动指定封面；不配置时自动使用相册内第一张图片。「相册名称」填写图库页面显示的相册名
+          children:
+            - $formkit: text
+              name: group
+              label: 相册名称
+              validation: required
+            - $formkit: attachment
+              name: cover
+              label: 封面图
+              validation: required

@@ -26,7 +26,11 @@
         <img th:src="${singlePage.spec.cover}" th:alt="${singlePage.spec.title}" />
       </div>
 
-      <div class="article-content" th:utext="${singlePage.content.content}"></div>
+      <div
+        class="article-content"
+        th:attr="data-lightbox=${theme.config?.basic?.enable_lightbox != false ? 'true' : null}"
+        th:utext="${singlePage.content.content}"
+      ></div>
     </article>
 
     <!-- 评论区 -->
