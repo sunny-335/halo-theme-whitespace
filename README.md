@@ -38,11 +38,11 @@
 
 在 Halo 后台「页面 → 新建 → 自定义模板」中选择使用：
 
-| 模板名  | 模板文件                  | 说明                    |
-| ---- | --------------------- | --------------------- |
-| 留言板  | `page_guestbook.html` | 以评论区作为留言板的单页          |
-| 微信读书 | `weread.html`         | 微信读书书架展示，依赖微信读书插件     |
-| 豆瓣页面 | `douban.html`         | 豆瓣记录页，依赖豆瓣插件          |
+| 模板名  | 模板文件                  | 说明                |
+| ---- | --------------------- | ----------------- |
+| 留言板  | `page_guestbook.html` | 以评论区作为留言板的单页      |
+| 微信读书 | `weread.html`         | 微信读书书架展示，依赖微信读书插件 |
+| 豆瓣页面 | `douban.html`         | 豆瓣记录页，依赖豆瓣插件      |
 
 ## 主要功能
 
@@ -164,4 +164,4 @@ pnpm check
 
 ## 致谢
 
-- 原主题：[whitespace 留白](https://kehua.me) by kehua
+- 原主题：[whitespace 留白](https://github.com/kehuame/whitespace) by kehua
